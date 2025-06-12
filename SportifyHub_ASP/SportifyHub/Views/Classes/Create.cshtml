@@ -1,0 +1,74 @@
+@model SportifyHub.Models.FitnessClass
+
+@{
+    ViewData["Title"] = "ایجاد کلاس جدید";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h4>کلاس ورزشی</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post"> @* Added method="post" *@
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ClassSportCategory" class="form-label">نوع ورزش</label>
+                <select asp-for="ClassSportCategory" asp-items="Html.GetEnumSelectList<SportCategory>()" class="form-select"></select>
+                <span asp-validation-for="ClassSportCategory" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Location" class="form-label"></label>
+                <input asp-for="Location" class="form-control" />
+                <span asp-validation-for="Location" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="SkillLevel" class="form-label">سطح مهارت</label>
+                <select asp-for="SkillLevel" asp-items="Html.GetEnumSelectList<SkillLevel>()" class="form-select"></select>
+                <span asp-validation-for="SkillLevel" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="InstructorId" class="form-label">مربی</label>
+                <select asp-for="InstructorId" class="form-select" asp-items="ViewBag.InstructorId">
+                    <option value="">-- انتخاب مربی --</option>
+                </select>
+                <span asp-validation-for="InstructorId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Schedule" class="form-label"></label>
+                <input asp-for="Schedule" class="form-control" placeholder="مثلا: شنبه و دوشنبه ۱۸:۰۰-۱۹:۳۰" />
+                <span asp-validation-for="Schedule" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Price" class="form-label"></label>
+                <input asp-for="Price" class="form-control" type="number" step="0.01" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Image" class="form-label">آدرس تصویر</label>
+                <input asp-for="Image" class="form-control" type="url" />
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <input type="submit" value="ایجاد" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">بازگشت به لیست</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

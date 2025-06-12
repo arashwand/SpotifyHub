@@ -1,0 +1,89 @@
+@model SportifyHub.ViewModels.OrderViewModel
+@using SportifyHub.ViewModels // For CartItemViewModel
+
+@{
+    ViewData["Title"] = "تایید و تکمیل سفارش";
+    // If Model is null (e.g. on initial GET if controller doesn't pass it), initialize for safety.
+    // However, the controller's Checkout action (which redirects here) should ideally prepare it.
+    // For now, assuming CartItems might be passed via ViewBag if OrderViewModel isn't fully populated on GET.
+    var cartItems = Model?.CartItems ?? ViewBag.CartItems as List<CartItemViewModel> ?? new List<CartItemViewModel>();
+    var totalAmount = Model?.TotalAmount ?? cartItems.Sum(item => item.TotalPrice);
+    var shippingAddress = Model?.ShippingAddress ?? ViewBag.ShippingAddress as string ?? User.Identity?.Name ?? "کاربر گرامی"; // Fallback
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <h4>خلاصه سفارش</h4>
+        @if (cartItems.Any())
+        {
+            <table class="table">
+                <thead>
+                    <tr><th>محصول</th><th>تعداد</th><th>قیمت واحد</th><th>قیمت کل</th></tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in cartItems)
+                    {
+                        <tr>
+                            <td>@item.ProductName</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.UnitPrice.ToString("N0") تومان</td>
+                            <td>@item.TotalPrice.ToString("N0") تومان</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="3" class="text-end"><strong>جمع کل:</strong></td><td><strong>@totalAmount.ToString("N0") تومان</strong></td></tr>
+                </tfoot>
+            </table>
+
+            <hr />
+            <h4>اطلاعات ارسال و پرداخت</h4>
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                @* Assuming OrderViewModel is used for POST binding. If GET passes data via ViewBag, this form needs proper model binding. *@
+                @* For a GET request, the controller should ideally populate an OrderViewModel instance and pass it to this view. *@
+                @* If using a simpler approach for GET (ViewBag for cart), then for POST, these fields need to be submitted. *@
+
+                <div class="mb-3">
+                    <label asp-for="ShippingAddress" class="form-label">آدرس کامل ارسال</label>
+                    <textarea asp-for="ShippingAddress" class="form-control" rows="3">@shippingAddress</textarea>
+                    <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+                </div>
+
+                @* Hidden fields to carry over cart data if not part of a fully bound OrderViewModel on POST back to controller from this view itself.
+                   The current OrdersController.Create POST expects a fully populated Order model and List<CartItem>.
+                   This means the cart data must be available to the POST action.
+                   One way is to re-fetch from session in POST, another is to serialize cart items into the form.
+                   For simplicity, let's assume the POST action re-fetches cart from session.
+                   The OrderViewModel would primarily be for collecting ShippingAddress here.
+                *@
+
+                <button type="submit" class="btn btn-success btn-lg mt-3">
+                    <i class="bi bi-shield-check"></i> ثبت نهایی سفارش (پرداخت شبیه سازی شده)
+                </button>
+            </form>
+        }
+        else
+        {
+            <p>سبد خرید شما برای پردازش خالی است. لطفا ابتدا محصولاتی به سبد خرید خود اضافه کنید.</p>
+            <a asp-controller="Shop" asp-action="Index" class="btn btn-primary">رفتن به فروشگاه</a>
+        }
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">راهنمایی</h5>
+                <p>لطفا موارد سفارش و آدرس خود را بررسی کنید. پس از تایید نهایی، سفارش شما ثبت خواهد شد.</p>
+                <p>در این مرحله، پرداخت به صورت شبیه سازی شده انجام می شود و نیازی به اطلاعات واقعی کارت نیست.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

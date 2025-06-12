@@ -7,22 +7,11 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using System;
-using Microsoft.AspNetCore.Authorization; // For TimeSpan in session options if configuring here (though done in Program.cs)
+using System; // For TimeSpan in session options if configuring here (though done in Program.cs)
+using SportifyHub.ViewModels; // Added for CartItemViewModel
 
 namespace SportifyHub.Controllers
 {
-    // View model for items in the cart
-    public class CartItemViewModel
-    {
-        public int ProductId { get; set; }
-        public string ProductName { get; set; } = string.Empty;
-        public decimal UnitPrice { get; set; }
-        public int Quantity { get; set; }
-        public string? ImageUrl { get; set; }
-        public decimal TotalPrice => UnitPrice * Quantity;
-    }
-
     // Extension methods for session serialization
     public static class SessionExtensions
     {

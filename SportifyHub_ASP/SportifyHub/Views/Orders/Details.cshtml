@@ -1,0 +1,65 @@
+@model SportifyHub.Models.Order
+@using System.Globalization // For CultureInfo
+@using SportifyHub.Models.Enums // For OrderStatus enum
+
+@{
+    ViewData["Title"] = "جزئیات سفارش #" + (Model?.Id.ToString() ?? "");
+}
+
+@if (Model == null)
+{
+    <p>سفارش مورد نظر یافت نشد.</p>
+    <a asp-action="Index" class="btn btn-secondary">بازگشت به لیست سفارشات</a>
+    return;
+}
+
+<h1>@ViewData["Title"]</h1>
+<div>
+    <h4>اطلاعات کلی سفارش</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">شماره سفارش</dt>
+        <dd class="col-sm-9">@Model.Id</dd>
+
+        <dt class="col-sm-3">تاریخ سفارش</dt>
+        <dd class="col-sm-9">@Model.OrderDate.ToString("D, HH:mm", new CultureInfo("fa-IR"))</dd>
+
+        <dt class="col-sm-3">کاربر</dt>
+        <dd class="col-sm-9">@(Model.User?.UserName ?? "نامشخص")</dd> @* Assuming User might not always be loaded *@
+
+        <dt class="col-sm-3">مبلغ کل</dt>
+        <dd class="col-sm-9">@Model.TotalAmount.ToString("N0") تومان</dd>
+
+        <dt class="col-sm-3">وضعیت</dt>
+        <dd class="col-sm-9">@Model.Status.ToString()</dd> @* TODO: Localize OrderStatus enum *@
+
+        <dt class="col-sm-3">آدرس ارسال</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.ShippingAddress)</dd>
+    </dl>
+
+    <h4>اقلام سفارش</h4>
+    @if (Model.OrderItems != null && Model.OrderItems.Any())
+    {
+        <table class="table">
+            <thead><tr><th>محصول</th><th>تعداد</th><th>قیمت واحد</th><th>قیمت کل</th></tr></thead>
+            <tbody>
+                @foreach(var item in Model.OrderItems)
+                {
+                    <tr>
+                        <td>@(item.Product?.Name ?? "محصول حذف شده")</td> @* Assuming Product might not always be loaded, or could be deleted *@
+                        <td>@item.Quantity</td>
+                        <td>@item.UnitPrice.ToString("N0") تومان</td>
+                        <td>@((item.Quantity * item.UnitPrice).ToString("N0")) تومان</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>هیچ آیتمی در این سفارش یافت نشد.</p>
+    }
+</div>
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">بازگشت به لیست سفارشات</a>
+</div>

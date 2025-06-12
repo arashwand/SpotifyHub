@@ -1,0 +1,66 @@
+@model SportifyHub.Models.Product
+
+@{
+    ViewData["Title"] = Model?.Name ?? "جزئیات محصول";
+}
+
+@if (Model == null)
+{
+    <p>محصول مورد نظر یافت نشد.</p>
+    <a asp-action="Index" class="btn btn-secondary">بازگشت به فروشگاه</a>
+    return;
+}
+
+<h1>@Html.DisplayFor(model => model.Name)</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        @if (Model.Images != null && Model.Images.Any())
+        {
+            // Basic image display, could be a carousel for multiple images
+            <img src="@Url.Content(Model.Images.First())" class="img-fluid rounded mb-3" alt="@Model.Name" style="max-height: 450px; object-fit:contain;">
+        }
+        else
+        {
+            <img src="~/images/placeholder-product.png" class="img-fluid rounded mb-3" alt="تصویر موجود نیست" style="max-height: 450px; object-fit:contain;">
+        }
+    </div>
+    <div class="col-md-6">
+        <h4>@Html.DisplayFor(model => model.Name)</h4>
+        <p><small class="text-muted">دسته بندی: @Model.Category</small></p>
+        <p><strong>قیمت: @Model.Price.ToString("N0") تومان</strong></p>
+        <p>موجودی: @(Model.Stock > 0 ? Model.Stock.ToString() + " عدد" : "ناموجود")</p>
+
+        <hr />
+        <h5>توضیحات</h5>
+        <p>@Html.Raw(Model.Description?.Replace(Environment.NewLine, "<br />"))</p>
+        <hr />
+
+        @if (Model.Stock > 0)
+        {
+            <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="productId" value="@Model.Id" />
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="quantity" class="col-form-label">تعداد:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="number" id="quantity" name="quantity" class="form-control form-control-sm" value="1" min="1" max="@Model.Stock" style="width: 70px;" />
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-cart-plus"></i> افزودن به سبد</button>
+                    </div>
+                </div>
+            </form>
+        }
+        else
+        {
+            <p class="text-danger">این محصول در حال حاضر موجود نیست.</p>
+        }
+    </div>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-light"> <i class="bi bi-arrow-right"></i> بازگشت به فروشگاه</a>
+</div>

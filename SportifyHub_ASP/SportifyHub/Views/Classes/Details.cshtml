@@ -1,0 +1,85 @@
+@model SportifyHub.Models.FitnessClass
+
+@{
+    ViewData["Title"] = Model?.Name ?? "جزئیات کلاس"; // Handle model being null initially
+    var reviews = Model?.Reviews?.ToList() ?? new List<Review>();
+}
+
+<h1>@Html.DisplayFor(model => model.Name)</h1>
+
+@if (Model == null)
+{
+    <p>اطلاعات کلاس یافت نشد.</p>
+    <a asp-action="Index" class="btn btn-secondary">بازگشت به لیست</a>
+    return;
+}
+
+<div>
+    <h4>جزئیات کلاس</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-7">
+            @if (!string.IsNullOrEmpty(Model.Image))
+            {
+                <img src="@Url.Content(Model.Image)" class="img-fluid mb-3" alt="@Model.Name" style="max-height: 400px; object-fit: cover;">
+            }
+            else
+            {
+                <img src="~/images/placeholder-class.png" class="img-fluid mb-3" alt="تصویر موجود نیست" style="max-height: 400px; object-fit: cover;">
+            }
+            <dl class="row">
+                <dt class="col-sm-3">نوع کلاس</dt>
+                <dd class="col-sm-9">@Model.ClassSportCategory.ToString()</dd>
+
+                <dt class="col-sm-3">سطح مهارت</dt>
+                <dd class="col-sm-9">@Model.SkillLevel.ToString()</dd>
+
+                <dt class="col-sm-3">مربی</dt>
+                <dd class="col-sm-9">@(Model.Instructor?.Name ?? "مشخص نشده")</dd>
+
+                <dt class="col-sm-3">مکان</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Location)</dd>
+
+                <dt class="col-sm-3">برنامه زمانی</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Schedule)</dd>
+
+                <dt class="col-sm-3">قیمت</dt>
+                <dd class="col-sm-9">@Model.Price.ToString("N0") تومان</dd>
+
+                <dt class="col-sm-3">امتیاز</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Rating) / 5</dd>
+
+                <dt class="col-sm-3">توضیحات</dt>
+                <dd class="col-sm-9">@Html.Raw(Model.Description?.Replace(Environment.NewLine, "<br />"))</dd>
+            </dl>
+        </div>
+        <div class="col-md-5">
+            <h4>ثبت نام در کلاس</h4>
+            @* TODO: Add specific registration logic if different from generic booking *@
+             <a asp-controller="Bookings" asp-action="CreateForClass" asp-route-classId="@Model.Id" class="btn btn-success mt-3">ثبت نام در این کلاس</a>
+        </div>
+    </div>
+    <hr />
+    <h4>نظرات کاربران</h4>
+    @if (reviews.Any())
+    {
+        @foreach (var review in reviews)
+        {
+            <div class="card mb-2">
+                <div class="card-body">
+                    <h6 class="card-title">@review.UserName <small class="text-muted">- @review.Rating ستاره</small></h6>
+                    <p class="card-text">@review.Comment</p>
+                    <small class="text-muted">تاریخ: @review.Date.ToString("yyyy/MM/dd")</small>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>هنوز نظری برای این کلاس ثبت نشده است.</p>
+    }
+</div>
+<div>
+    <a asp-action="Index" class="btn btn-secondary">بازگشت به لیست</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">ویرایش</a>
+</div>

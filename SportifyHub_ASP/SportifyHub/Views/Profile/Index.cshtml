@@ -1,0 +1,36 @@
+@model SportifyHub.Models.ApplicationUser
+@{
+    ViewData["Title"] = "پروفایل کاربری";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (Model != null)
+{
+    <h4>سلام، @(Model.Name ?? Model.UserName)!</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">نام کامل</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Name)</dd>
+
+        <dt class="col-sm-3">ایمیل</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+
+        <dt class="col-sm-3">شماره تلفن</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.PhoneNumber)</dd>
+
+        <dt class="col-sm-3">آدرس</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Address)</dd>
+    </dl>
+
+    <div class="mt-3">
+        <a asp-area="Identity" asp-page="/Account/Manage/Index" class="btn btn-primary">مدیریت حساب کاربری</a>
+        <a asp-controller="Orders" asp-action="Index" class="btn btn-info">سفارشات من</a>
+        <a asp-controller="Bookings" asp-action="Index" class="btn btn-success">رزروهای من</a>
+    </div>
+}
+else
+{
+    <p>اطلاعات پروفایل یافت نشد. لطفا ابتدا وارد شوید.</p>
+     <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary">ورود به حساب کاربری</a>
+}

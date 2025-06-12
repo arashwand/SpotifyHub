@@ -1,0 +1,67 @@
+@model SportifyHub.Models.Booking
+@using SportifyHub.Models.Enums // For BookingType
+
+@{
+    ViewData["Title"] = "ایجاد رزرو برای: " + ViewBag.ItemName;
+    var itemType = ViewBag.ItemType as string ?? "مورد";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h4>@itemType</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ItemId" />
+            <input type="hidden" asp-for="ItemName" />
+            <input type="hidden" asp-for="Type" />
+            <input type="hidden" asp-for="Price" /> @* Price is set by controller, hidden here *@
+
+            <p>شما در حال رزرو <strong>@Model.ItemName</strong> (@(Model.Type == BookingType.Venue ? "مکان ورزشی" : "کلاس")) به مبلغ <strong>@Model.Price.ToString("N0") تومان</strong> هستید.</p>
+
+            <div class="mb-3">
+                <label asp-for="BookingDate" class="form-label">تاریخ</label>
+                <input asp-for="BookingDate" class="form-control" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                <span asp-validation-for="BookingDate" class="text-danger"></span>
+            </div>
+
+            @if (Model.Type == BookingType.Venue)
+            {
+                <div class="mb-3">
+                    <label asp-for="TimeSlot" class="form-label">سانس زمانی</label>
+                    @* TODO: Populate this with available slots from ViewBag or a ViewModel property *@
+                    <input asp-for="TimeSlot" class="form-control" placeholder="مثلا: ۱۶:۰۰-۱۸:۰۰" />
+                    <span asp-validation-for="TimeSlot" class="text-danger"></span>
+                    <small class="form-text text-muted">سانس های موجود را از صفحه جزئیات مکان بررسی کنید.</small>
+                </div>
+            }
+            else if (Model.Type == BookingType.Class)
+            {
+                 <div class="mb-3">
+                    <label asp-for="TimeSlot" class="form-label">جزئیات (اختیاری)</label>
+                    <input asp-for="TimeSlot" class="form-control" placeholder="هرگونه توضیح اضافی برای این رزرو کلاس" />
+                    <span asp-validation-for="TimeSlot" class="text-danger"></span>
+                </div>
+            }
+
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> تایید و ایجاد رزرو</button>
+                @if (Model.Type == BookingType.Venue)
+                {
+                    <a asp-controller="Venues" asp-action="Details" asp-route-id="@Model.ItemId" class="btn btn-secondary">انصراف</a>
+                }
+                else if (Model.Type == BookingType.Class)
+                {
+                    <a asp-controller="Classes" asp-action="Details" asp-route-id="@Model.ItemId" class="btn btn-secondary">انصراف</a>
+                }
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

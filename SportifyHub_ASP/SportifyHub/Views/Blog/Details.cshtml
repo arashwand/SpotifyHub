@@ -1,0 +1,58 @@
+@model SportifyHub.Models.Article
+@using System.Text.Json;
+@using System.Globalization; // For CultureInfo
+
+@{
+    ViewData["Title"] = Model?.Title ?? "جزئیات مقاله";
+    var tagsList = new List<string>();
+    if (Model != null && !string.IsNullOrEmpty(Model.TagsJson)) {
+        try { tagsList = JsonSerializer.Deserialize<List<string>>(Model.TagsJson) ?? new List<string>(); }
+        catch { /* Ignore error for display, or log it */ }
+    }
+}
+
+@if (Model == null)
+{
+    <p>مقاله مورد نظر یافت نشد.</p>
+    <a asp-action="Index" class="btn btn-secondary">بازگشت به لیست مقالات</a>
+    return;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <h1 class="mb-3">@Html.DisplayFor(model => model.Title)</h1>
+            <p class="text-muted">
+                <i class="bi bi-folder"></i> @Model.Category &nbsp;&nbsp;
+                <i class="bi bi-person"></i> @Model.Author &nbsp;&nbsp;
+                <i class="bi bi-calendar-event"></i> @Model.Date.ToString("D", new CultureInfo("fa-IR"))
+            </p>
+
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Url.Content(Model.ImageUrl)" class="img-fluid rounded mb-4 w-100" alt="@Model.Title" style="max-height: 450px; object-fit: cover;" />
+            }
+             else
+            {
+                <img src="~/images/placeholder-article.png" class="img-fluid rounded mb-4 w-100" alt="تصویر موجود نیست" style="max-height: 450px; object-fit: cover;" />
+            }
+
+            <div class="article-content">
+                @Html.Raw(Model.Content?.Replace(Environment.NewLine, "<br />"))
+            </div>
+
+            @if (tagsList.Any())
+            {
+                <div class="mt-4">
+                    <strong><i class="bi bi-tags"></i> تگ ها:</strong>
+                    @foreach (var tag in tagsList)
+                    {
+                        <span class="badge bg-secondary me-1">@tag</span>
+                    }
+                </div>
+            }
+            <hr />
+            <a asp-action="Index" class="btn btn-light"><i class="bi bi-arrow-right"></i> بازگشت به لیست مقالات</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,34 @@
+@model SportifyHub.Models.Product
+
+@{
+    ViewData["Title"] = "حذف محصول: " + Model.Name;
+    // Layout = "_AdminLayout";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (Model == null)
+{
+    <p>محصول یافت نشد.</p>
+    <a asp-action="Manage" class="btn btn-secondary">بازگشت به مدیریت</a>
+    return;
+}
+
+<h3>آیا از حذف این محصول مطمئن هستید؟</h3>
+<div>
+    <h4>@Model.Name</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">دسته بندی</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Category)</dd>
+        <dt class="col-sm-2">قیمت</dt>
+        <dd class="col-sm-10">@Model.Price.ToString("N0")</dd>
+    </dl>
+
+    <form asp-action="DeleteProductConfirmed" asp-route-id="@Model.Id" method="post"> @* Corrected asp-action to match controller *@
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="حذف" class="btn btn-danger" /> |
+        <a asp-action="Manage" class="btn btn-secondary">بازگشت به مدیریت</a>
+    </form>
+</div>

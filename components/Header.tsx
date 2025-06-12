@@ -1,15 +1,13 @@
-
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { NAV_LINKS, MOCK_USER_PROFILE } from '../mockData.tsx'; 
-import { Paths, UserProfile } from '../types';
+import { NAV_LINKS, MOCK_USER_PROFILE } from '../constants'; // Adjust path if needed
+import { Paths } from '../types';
 import Button from './common/Button';
-import { MenuIcon, CloseIcon, ShoppingCartIcon } from './common/Icons'; // Import from common Icons file
 
 // Mock Auth State (replace with actual AuthContext later)
 const useMockAuth = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState<UserProfile | null>(null);
+    const [user, setUser] = useState<typeof MOCK_USER_PROFILE | null>(null);
 
     const login = () => {
         setIsAuthenticated(true);
@@ -25,8 +23,7 @@ const useMockAuth = () => {
 
 const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isAuthenticated, user, login, logout } = useMockAuth(); 
-
+  const { isAuthenticated, user, login, logout } = useMockAuth(); // Using mock auth for now
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-40">
@@ -142,5 +139,10 @@ const Header: React.FC = () => {
     </header>
   );
 };
+
+// Placeholder Icons
+const MenuIcon: React.FC<{className?: string}> = ({className}) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>);
+const CloseIcon: React.FC<{className?: string}> = ({className}) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>);
+const ShoppingCartIcon: React.FC<{className?: string}> = ({className}) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>);
 
 export default Header;

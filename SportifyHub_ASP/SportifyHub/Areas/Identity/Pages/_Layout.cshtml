@@ -1,0 +1,14 @@
+@{
+    Layout = "/Views/Shared/_Layout.cshtml"; // Use the main application layout
+}
+
+@* This layout can be used to provide a common structure for Identity pages if needed,
+   but often they just use the main app layout directly.
+   If specific Identity area styling or containers are needed, they go here.
+   For now, it just sets the main layout. *@
+
+@RenderBody()
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

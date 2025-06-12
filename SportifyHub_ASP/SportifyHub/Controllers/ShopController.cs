@@ -42,7 +42,7 @@ namespace SportifyHub.Controllers
         // --- Admin-focused CRUD operations ---
 
         // GET: Shop/Manage (Admin: List products for management)
-        // [Authorize(Roles = "Admin")] // Example authorization
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Manage()
         {
             var products = await _productService.GetAllProductsAsync();

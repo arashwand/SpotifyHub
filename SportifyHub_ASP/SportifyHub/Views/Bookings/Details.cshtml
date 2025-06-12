@@ -1,0 +1,48 @@
+@model SportifyHub.Models.Booking
+@using SportifyHub.Models.Enums // For BookingType
+@using System.Globalization // For CultureInfo
+
+@{
+    ViewData["Title"] = "جزئیات رزرو: " + (Model?.ItemName ?? "رزرو");
+}
+
+
+@if (Model == null)
+{
+    <p>رزرو مورد نظر یافت نشد.</p>
+    <a asp-action="Index" class="btn btn-secondary">بازگشت به لیست رزروها</a>
+    return;
+}
+<h1>@ViewData["Title"]</h1>
+<div>
+    <h4>رزرو شماره @Model.Id</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">نام مورد</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.ItemName)</dd>
+
+        <dt class="col-sm-3">نوع</dt>
+        <dd class="col-sm-9">@(Model.Type == BookingType.Venue ? "مکان ورزشی" : "کلاس")</dd>
+
+        <dt class="col-sm-3">تاریخ رزرو</dt>
+        <dd class="col-sm-9">@Model.BookingDate.ToString("D", new CultureInfo("fa-IR"))</dd>
+
+        @if (!string.IsNullOrEmpty(Model.TimeSlot))
+        {
+            <dt class="col-sm-3">سانس/زمان</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.TimeSlot)</dd>
+        }
+
+        <dt class="col-sm-3">وضعیت</dt>
+        <dd class="col-sm-9">@Model.Status.ToString()</dd> @* TODO: Localize *@
+
+        <dt class="col-sm-3">قیمت پرداختی</dt>
+        <dd class="col-sm-9">@Model.Price.ToString("N0") تومان</dd>
+
+        <dt class="col-sm-3">کاربر</dt>
+        <dd class="col-sm-9">@(Model.User?.UserName ?? "نامشخص")</dd> @* Assuming User might not always be loaded or available *@
+    </dl>
+</div>
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">بازگشت به لیست رزروهای من</a>
+</div>

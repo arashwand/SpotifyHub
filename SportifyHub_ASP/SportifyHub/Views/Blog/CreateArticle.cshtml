@@ -1,0 +1,67 @@
+@model SportifyHub.Models.Article
+
+@{
+    ViewData["Title"] = "ایجاد مقاله جدید";
+    // Layout = "_AdminLayout";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h4>مقاله</h4>
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="CreateArticle" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Category" class="form-label"></label>
+                <input asp-for="Category" class="form-control" /> @* Or SelectList *@
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Author" class="form-label"></label>
+                <input asp-for="Author" class="form-control" />
+                <span asp-validation-for="Author" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Date" class="form-label"></label>
+                <input asp-for="Date" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Summary" class="form-label"></label>
+                <textarea asp-for="Summary" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Summary" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Content" class="form-label"></label>
+                <textarea asp-for="Content" class="form-control" rows="10"></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ImageUrl" class="form-label"></label>
+                <input asp-for="ImageUrl" class="form-control" type="url" />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="TagsJson" class="form-label">تگ ها (JSON Array)</label>
+                <textarea asp-for="TagsJson" class="form-control" rows="2" placeholder='["تگ اول", "تگ دوم"]'>@Model?.TagsJson</textarea>
+                <span asp-validation-for="TagsJson" class="text-danger"></span>
+                 <small class="form-text text-muted">فرمت صحیح: ["تگ۱", "تگ۲"]</small>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="ایجاد" class="btn btn-primary" />
+                <a asp-action="Manage" class="btn btn-secondary">بازگشت به مدیریت</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

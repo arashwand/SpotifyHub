@@ -1,0 +1,127 @@
+@model SportifyHub.Models.Venue
+
+@{
+    ViewData["Title"] = Model.Name;
+    // var qualificationsList = ViewBag.QualificationsList as List<string> ?? new List<string>(); // For Coach Details, adapt for Venue
+    var amenitiesList = Model.VenueAmenities?.Select(va => va.Amenity?.Name).Where(name => name != null).ToList() ?? new List<string>();
+    var reviews = Model.Reviews?.ToList() ?? new List<Review>();
+}
+
+<h1>@Html.DisplayFor(model => model.Name)</h1>
+
+<div>
+    <h4>جزئیات مکان ورزشی</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-7">
+            @if (Model.Images != null && Model.Images.Any())
+            {
+                <div id="venueCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @for (int i = 0; i < Model.Images.Count; i++)
+                        {
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <img src="@Url.Content(Model.Images.ElementAt(i))" class="d-block w-100" alt="@Model.Name slide @(i+1)" style="max-height: 400px; object-fit: cover;">
+                            </div>
+                        }
+                    </div>
+                    @if (Model.Images.Count > 1)
+                    {
+                        <button class="carousel-control-prev" type="button" data-bs-target="#venueCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">قبلی</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#venueCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">بعدی</span>
+                        </button>
+                    }
+                </div>
+            }
+            else
+            {
+                 <img src="~/images/placeholder-venue.png" class="img-fluid mb-3" alt="تصویر موجود نیست" style="max-height: 400px; object-fit: cover;">
+            }
+
+            <dl class="row">
+                <dt class="col-sm-3">نوع ورزش</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.SportType)</dd>
+
+                <dt class="col-sm-3">موقعیت</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Location)</dd>
+
+                <dt class="col-sm-3">شهر</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.City)</dd>
+
+                <dt class="col-sm-3">قیمت ساعتی</dt>
+                <dd class="col-sm-9">@Model.PricePerHour.ToString("N0") تومان</dd>
+
+                <dt class="col-sm-3">امتیاز</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Rating) / 5</dd>
+
+                <dt class="col-sm-3">توضیحات</dt>
+                <dd class="col-sm-9">@Html.Raw(Model.Description?.Replace(Environment.NewLine, "<br />"))</dd>
+
+                @if (!string.IsNullOrEmpty(Model.MapLink) && Model.MapLink != "#")
+                {
+                    <dt class="col-sm-3">نقشه</dt>
+                    <dd class="col-sm-9"><a href="@Model.MapLink" target="_blank">مشاهده در نقشه</a></dd>
+                }
+            </dl>
+        </div>
+        <div class="col-md-5">
+            <h4>امکانات</h4>
+            @if (amenitiesList.Any())
+            {
+                <ul>
+                    @foreach (var amenityName in amenitiesList)
+                    {
+                        <li>@amenityName</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>امکاناتی ثبت نشده است.</p>
+            }
+
+            <h4>سانس های موجود</h4>
+            @* TODO: Display AvailableTimeSlotsJson in a user-friendly way *@
+            <p><em>(نمایش سانس ها در اینجا پیاده سازی خواهد شد)</em></p>
+            <pre>@Model.AvailableTimeSlotsJson</pre> @* Temporary display *@
+
+            <a asp-controller="Bookings" asp-action="CreateForVenue" asp-route-venueId="@Model.Id" class="btn btn-success mt-3">رزرو این مکان</a>
+
+        </div>
+    </div>
+
+    <hr />
+    <h4>نظرات کاربران</h4>
+    @if (reviews.Any())
+    {
+        @foreach (var review in reviews)
+        {
+            <div class="card mb-2">
+                <div class="card-body">
+                    <h6 class="card-title">@review.UserName <small class="text-muted">- @review.Rating ستاره</small></h6>
+                    <p class="card-text">@review.Comment</p>
+                    <small class="text-muted">تاریخ: @review.Date.ToString("yyyy/MM/dd")</small>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>هنوز نظری برای این مکان ثبت نشده است.</p>
+    }
+    @* TODO: Add a form or link to add a new review (if users can review directly on this page) *@
+
+</div>
+<div>
+    <a asp-action="Index" class="btn btn-secondary">بازگشت به لیست</a>
+    @* @if (User.IsInRole("Admin")) { *@
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">ویرایش</a>
+    @* } *@
+</div>
+
+EOF

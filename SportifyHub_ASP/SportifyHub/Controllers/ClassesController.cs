@@ -39,6 +39,7 @@ namespace SportifyHub.Controllers
         }
 
         // GET: Classes/Create
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             var coaches = await _coachService.GetAllCoachesAsync();
@@ -49,6 +50,7 @@ namespace SportifyHub.Controllers
         }
 
         // POST: Classes/Create
+        // [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,ClassSportCategory,Location,SkillLevel,InstructorId,Schedule,Price,Description,Image")] FitnessClass fitnessClass)
@@ -68,6 +70,7 @@ namespace SportifyHub.Controllers
         }
 
         // GET: Classes/Edit/5
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             if (id <= 0) return NotFound();
@@ -82,6 +85,7 @@ namespace SportifyHub.Controllers
         }
 
         // POST: Classes/Edit/5
+        // [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ClassSportCategory,Location,SkillLevel,InstructorId,Schedule,Price,Description,Image,Rating")] FitnessClass fitnessClass)
@@ -111,6 +115,7 @@ namespace SportifyHub.Controllers
         }
 
         // GET: Classes/Delete/5
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             if (id <= 0) return NotFound();
@@ -120,6 +125,7 @@ namespace SportifyHub.Controllers
         }
 
         // POST: Classes/Delete/5
+        // [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

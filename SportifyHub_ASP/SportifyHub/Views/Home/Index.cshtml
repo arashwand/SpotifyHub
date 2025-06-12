@@ -1,8 +1,25 @@
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "صفحه اصلی";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">به SportifyHub خوش آمدید</h1>
+    <p>پلتفرم جامع ورزشی شما.</p>
+    <p>مکان ورزشی مورد نظر خود را پیدا کنید، در کلاس ثبت نام کنید، مربی استخدام کنید، تجهیزات بخرید و مقالات ورزشی بخوانید!</p>
+</div>
+
+@* Placeholder for featured items - this would require data from controllers/services *@
+<div class="row mt-5">
+    <div class="col-md-4">
+        <h2><a asp-controller="Venues" asp-action="Index">اماکن ورزشی</a></h2>
+        <p>جدیدترین اماکن ورزشی را مشاهده کنید.</p>
+    </div>
+    <div class="col-md-4">
+        <h2><a asp-controller="Classes" asp-action="Index">کلاس ها</a></h2>
+        <p>در کلاس های متنوع ورزشی شرکت کنید.</p>
+    </div>
+    <div class="col-md-4">
+        <h2><a asp-controller="Shop" asp-action="Index">فروشگاه</a></h2>
+        <p>تجهیزات ورزشی مورد نیاز خود را بخرید.</p>
+    </div>
 </div>

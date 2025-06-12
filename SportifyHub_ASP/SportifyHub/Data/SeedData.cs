@@ -12,26 +12,26 @@ namespace SportifyHub.Data
     public static class SeedData
     {
         // Placeholder for actual context injection if we were to save to DB
-        public static void EnsurePopulated(IApplicationBuilder app)
-        {
-            ApplicationDbContext context = app.ApplicationServices
-                .CreateScope().ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-            if (context.Database.GetPendingMigrations().Any())
-            {
-                // context.Database.Migrate(); // Apply migrations - SKIPPING THIS
-            }
-
-            if (context.Venues.Any() || context.FitnessClasses.Any())
-            {
-                Console.WriteLine("Database already seeded.");
-                return; // DB has been seeded
-            }
-
-            Console.WriteLine("Seeding database...");
-            PopulateData(context);
-            Console.WriteLine("Database seeding complete.");
-        }
+        // public static void EnsurePopulated(IApplicationBuilder app)
+        // {
+        //     ApplicationDbContext context = app.ApplicationServices
+        //         .CreateScope().ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        //
+        //     if (context.Database.GetPendingMigrations().Any())
+        //     {
+        //         // context.Database.Migrate(); // Apply migrations - SKIPPING THIS
+        //     }
+        //
+        //     if (context.Venues.Any() || context.FitnessClasses.Any())
+        //     {
+        //         Console.WriteLine("Database already seeded.");
+        //         return; // DB has been seeded
+        //     }
+        //
+        //     Console.WriteLine("Seeding database...");
+        //     PopulateData(context);
+        //     Console.WriteLine("Database seeding complete.");
+        // }
 
         // This method will prepare data and could be called by EnsurePopulated or a similar mechanism.
         // For now, it just demonstrates data creation. The `context.SaveChanges()` will be commented out.

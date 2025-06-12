@@ -1,0 +1,33 @@
+@model SportifyHub.Models.Article
+
+@{
+    ViewData["Title"] = "حذف مقاله: " + Model?.Name; // Added null conditional for Model.Name
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (Model == null)
+{
+    <p>مقاله یافت نشد.</p>
+    <a asp-action="Manage" class="btn btn-secondary">بازگشت به مدیریت</a>
+    return;
+}
+
+<h3>آیا از حذف این مقاله مطمئن هستید؟</h3>
+<div>
+    <h4>@Model.Title</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">دسته بندی</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Category)</dd>
+        <dt class="col-sm-2">نویسنده</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Author)</dd>
+    </dl>
+
+    <form asp-action="DeleteArticleConfirmed" asp-route-id="@Model.Id" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="حذف" class="btn btn-danger" /> |
+        <a asp-action="Manage" class="btn btn-secondary">بازگشت به مدیریت</a>
+    </form>
+</div>

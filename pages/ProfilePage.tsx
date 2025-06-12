@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
-import { MOCK_USER_PROFILE, MOCK_BOOKINGS, MOCK_ORDERS } from '../mockData.tsx'; 
-import { UserProfile, Booking, Order } from '../types'; 
+import { MOCK_USER_PROFILE, MOCK_BOOKINGS, MOCK_ORDERS } from '../constants'; // Adjust path
+import { UserProfile, Booking, Order } from '../types'; // Adjust path
 import Button from '../components/common/Button';
 import Modal from '../components/common/Modal';
 
 // Mock Auth State (replace with actual AuthContext later)
 const useMockAuth = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(true); 
+    const [isAuthenticated, setIsAuthenticated] = useState(true); // Assume logged in for profile
     const [user, setUser] = useState<UserProfile>(MOCK_USER_PROFILE);
 
     const updateUser = (updatedData: Partial<UserProfile>) => {
@@ -18,12 +18,13 @@ const useMockAuth = () => {
 
 
 const ProfilePage: React.FC = () => {
-  const { user, updateUser } = useMockAuth(); 
+  const { user, updateUser } = useMockAuth(); // Using mock auth and user data
   const [activeTab, setActiveTab] = useState<'profile' | 'bookings' | 'orders'>('profile');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editFormData, setEditFormData] = useState<UserProfile>(user);
 
   if (!user) {
+    // In a real app with AuthContext, this would redirect to login or show an appropriate message
     return <div className="container mx-auto p-8 text-center">لطفا برای مشاهده پروفایل خود وارد شوید.</div>;
   }
 
@@ -110,7 +111,7 @@ const ProfilePage: React.FC = () => {
   const TabButton: React.FC<{tabKey: 'profile' | 'bookings' | 'orders', label: string}> = ({tabKey, label}) => (
     <button
         onClick={() => setActiveTab(tabKey)}
-        className={`px-4 py-2 font-medium text-sm rounded-md transition-colors w-full text-right ${ // Ensure button is full width for sidebar
+        className={`px-4 py-2 font-medium text-sm rounded-md transition-colors ${
         activeTab === tabKey
             ? 'bg-primary text-white shadow-md'
             : 'text-light-text hover:bg-gray-100 hover:text-dark'

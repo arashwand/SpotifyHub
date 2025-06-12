@@ -54,6 +54,7 @@ namespace SportifyHub.Controllers
         }
 
         // GET: Coaches/Create
+        // [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewBag.AllSpecialties = Enum.GetValues(typeof(SportCategory))
@@ -64,6 +65,7 @@ namespace SportifyHub.Controllers
         }
 
         // POST: Coaches/Create
+        // [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Location,Bio,QualificationsJson,PhotoUrl,ContactInfo,ExperienceYears")] Coach coach, List<SportCategory> selectedSpecialties)
@@ -87,6 +89,7 @@ namespace SportifyHub.Controllers
         }
 
         // GET: Coaches/Edit/5
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             if (id <= 0) return NotFound();
@@ -105,6 +108,7 @@ namespace SportifyHub.Controllers
         }
 
         // POST: Coaches/Edit/5
+        // [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Location,Bio,QualificationsJson,PhotoUrl,ContactInfo,ExperienceYears,Rating")] Coach coach, List<SportCategory> selectedSpecialties)
@@ -155,6 +159,7 @@ namespace SportifyHub.Controllers
         }
 
         // GET: Coaches/Delete/5
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             if (id <= 0) return NotFound();
@@ -164,6 +169,7 @@ namespace SportifyHub.Controllers
         }
 
         // POST: Coaches/Delete/5
+        // [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

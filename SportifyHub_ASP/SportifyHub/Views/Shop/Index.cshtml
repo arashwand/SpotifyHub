@@ -1,0 +1,47 @@
+@model IEnumerable<SportifyHub.Models.Product>
+
+@{
+    ViewData["Title"] = "فروشگاه";
+}
+
+<h1>@ViewData["Title"]</h1>
+@* TODO: Add filtering/sorting options for products *@
+
+<div class="row">
+    @if (Model == null || !Model.Any())
+    {
+        <p>محصولی برای نمایش یافت نشد.</p>
+    }
+    else
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card h-100">
+                    @if (item.Images != null && item.Images.Any())
+                    {
+                        <img src="@Url.Content(item.Images.First())" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <img src="~/images/placeholder-product.png" class="card-img-top" alt="تصویر موجود نیست" style="height: 200px; object-fit: cover;">
+                    }
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
+                        <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => item.Category)</small></p>
+                        <p class="card-text mt-auto"><strong>@item.Price.ToString("N0") تومان</strong></p>
+                        <div class="mt-auto">
+                           <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm">مشاهده جزئیات</a>
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="productId" value="@item.Id" />
+                                <input type="hidden" name="quantity" value="1" />
+                                <button type="submit" class="btn btn-primary btn-sm">افزودن به سبد</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { PERSIAN_MONTH_NAMES, PERSIAN_DAYS_OF_WEEK, MOCK_HOLIDAYS } from '../../mockData.tsx'; 
+import { PERSIAN_MONTH_NAMES, PERSIAN_DAYS_OF_WEEK, MOCK_HOLIDAYS } from '../../constants'; // For display and holidays
 
 export type DailyAvailabilityStatus = 'low' | 'medium' | 'high' | 'full' | 'holiday' | 'past' | 'unavailable';
 
@@ -28,14 +28,15 @@ const Calendar: React.FC<CalendarProps> = ({
   const firstDayOfMonth = new Date(year, month, 1);
   const lastDayOfMonth = new Date(year, month + 1, 0);
   const daysInMonth = lastDayOfMonth.getDate();
-  const startDayOfWeek = firstDayOfMonth.getDay(); 
+  const startDayOfWeek = firstDayOfMonth.getDay(); // 0 (Sun) - 6 (Sat)
 
-  const holidayDatesTimestamps = React.useMemo(() => new Set(MOCK_HOLIDAYS.map(h => {
+  // Convert MOCK_HOLIDAYS strings to Date objects for easier comparison
+  const holidayDates = MOCK_HOLIDAYS.map(h => {
     const [hYear, hMonth, hDay] = h.split('/').map(Number);
     const date = new Date(hYear, hMonth - 1, hDay);
     date.setHours(0,0,0,0);
-    return date.getTime();
-  })), []);
+    return date.getTime(); // Compare by time value
+  });
 
 
   const handlePrevMonth = () => {
@@ -87,9 +88,9 @@ const Calendar: React.FC<CalendarProps> = ({
       const isSelected = selectedDate && currentDateTimestamp === selectedDate.getTime();
       const isToday = currentDateTimestamp === today.getTime();
       const isPast = currentDateTimestamp < today.getTime();
-      const isHoliday = holidayDatesTimestamps.has(currentDateTimestamp);
+      const isHoliday = holidayDates.includes(currentDateTimestamp);
 
-      let dayStatus: DailyAvailabilityStatus = 'unavailable'; 
+      let dayStatus: DailyAvailabilityStatus = 'unavailable'; // Default for future non-holiday days
       let isDisabled = false;
       let cellClasses = 'p-2 w-full text-center rounded-md text-sm transition-colors relative focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1';
 
@@ -107,23 +108,23 @@ const Calendar: React.FC<CalendarProps> = ({
       
       if (!isDisabled) {
         switch (dayStatus) {
-            case 'low': 
+            case 'low': // Many slots available
                 cellClasses += ' bg-green-100 hover:bg-green-200 text-green-800';
                 break;
-            case 'medium': 
+            case 'medium': // Some slots available
                 cellClasses += ' bg-green-300 hover:bg-green-400 text-green-900';
                 break;
-            case 'high': 
+            case 'high': // Few slots available (busy)
                 cellClasses += ' bg-green-500 hover:bg-green-600 text-white';
                 break;
-            case 'full': 
+            case 'full': // No slots available
                 cellClasses += ' bg-red-200 hover:bg-red-300 text-red-700';
                 break;
-            case 'unavailable': 
-                 cellClasses += ' bg-gray-50 hover:bg-gray-100 text-dark'; 
+            case 'unavailable': // Default for future days if no specific status
+                 cellClasses += ' bg-gray-50 hover:bg-gray-100 text-dark'; // A neutral, available look
                  break;
-            default: 
-                 cellClasses += ' text-dark'; 
+            default: // Includes 'past' and 'holiday' already handled or any other unexpected
+                 cellClasses += ' text-dark'; // Default, should be covered
                  break;
         }
       }
@@ -132,7 +133,7 @@ const Calendar: React.FC<CalendarProps> = ({
       if (isSelected) {
         cellClasses += ' ring-2 ring-offset-1 ring-accent font-semibold';
       }
-      if (isToday && !isSelected && !isPast && !isHoliday) { // Only style today if it's selectable
+      if (isToday && !isSelected) {
         cellClasses += ' border border-accent text-accent';
       }
       

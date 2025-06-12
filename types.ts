@@ -1,5 +1,5 @@
 
-import React from 'react'; 
+import React from 'react'; // Added import
 
 export enum SportCategory {
   FOOTBALL = "فوتبال",
@@ -24,7 +24,7 @@ export interface Review {
   id: string;
   userId: string;
   userName: string;
-  rating: number; 
+  rating: number; // 1-5
   comment: string;
   date: string;
 }
@@ -37,8 +37,9 @@ export interface Venue {
   city: string;
   images: string[]; 
   mapLink?: string; 
-  availableTimeSlots: { 
-    [dayOfWeek: string]: string[]; 
+  // availableTimeSlots: string[]; // Old structure
+  availableTimeSlots: { // New structure: maps day of week (Persian) to time slots
+    [dayOfWeek: string]: string[]; // e.g., "شنبه": ["۱۰:۰۰-۱۲:۰۰", "۱۴:۰۰-۱۶:۰۰"]
   };
   pricePerHour: number;
   rating: number; 
@@ -95,6 +96,10 @@ export interface Product {
   rating?: number;
 }
 
+export interface CartItem extends Product {
+  quantity: number;
+}
+
 export interface Article {
   id: string;
   title: string;
@@ -116,23 +121,19 @@ export interface UserProfile {
   address?: string;
 }
 
-export interface BookingSlot {
-  date: Date; // This is Date object for internal calculations in VenuesPage
-  timeSlot: string;
-}
-
 export interface Booking {
   id: string;
   type: 'venue' | 'class';
   itemId: string;
   itemName: string;
-  date: string; 
+  date: string; // This could be a single date string or array for recurring
   time?: string; 
   status: 'تایید شده' | 'در انتظار' | 'لغو شده';
   price: number;
+  // For recurring bookings
   recurrenceType?: 'once' | 'weekly' | 'monthly';
   numberOfSessions?: number;
-  bookedSlots?: BookingSlot[]; // Uses Date objects here for user display logic
+  bookedSlots?: BookingSlot[];
 }
 
 export interface Order {
@@ -156,9 +157,9 @@ export interface FilterOption {
 
 export interface FilterGroup {
   id: string;
-  name: string; 
+  name: string; // e.g. "نوع ورزش"
   options: FilterOption[];
-  type: 'select' | 'checkbox' | 'radio' | 'range'; 
+  type: 'select' | 'checkbox' | 'radio' | 'range'; // For future expansion
 }
 
 export const Paths = {
@@ -170,30 +171,10 @@ export const Paths = {
   BLOG: '/blog',
   PROFILE: '/profile',
   LOGIN: '/login',
-  CART: '/cart', 
+  CART: '/cart', // Added for clarity
 };
 
-// New Cart Item Structure for supporting products and venue bookings
-export interface ProductCartItem {
-  type: 'product';
-  id: string; // Product ID
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
-  stock: number;
-  category: string; // Added category
+export interface BookingSlot {
+  date: Date;
+  timeSlot: string;
 }
-
-export interface VenueBookingCartItem {
-  type: 'venue_booking';
-  id: string; // Unique ID for this booking instance, e.g., `booking-${venueId}-${timestamp}`
-  venueId: string;
-  venueName: string;
-  venueImage: string;
-  slots: { date: string, timeSlot: string }[]; // Store dates as ISO strings for cart
-  pricePerSlot: number;
-  totalPrice: number;
-}
-
-export type CartDisplayItem = ProductCartItem | VenueBookingCartItem;

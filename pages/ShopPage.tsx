@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import Card from '../components/common/Card';
@@ -7,23 +6,21 @@ import Modal from '../components/common/Modal';
 import Button from '../components/common/Button';
 import SearchBar from '../components/common/SearchBar';
 import StarRating from '../components/common/StarRating';
-import { MOCK_PRODUCTS, PRODUCT_CATEGORY_OPTIONS } from '../mockData.tsx'; 
-import { Product, FilterGroup, CartDisplayItem, ProductCartItem } from '../types'; 
-import { Paths } from '../types'; 
+import { MOCK_PRODUCTS, PRODUCT_CATEGORY_OPTIONS } from '../constants'; // Adjust path
+import { Product, FilterGroup, CartItem } from '../types'; // Adjust path
+import { Paths } from '../types'; // For navigation to cart
 
+// Example cart state (in a real app, this would be in Context or Redux)
 // Simulate global cart using a window property for this exercise.
 if (!(window as any).globalCartSportify) {
     (window as any).globalCartSportify = [];
 }
-const getGlobalCart = (): CartDisplayItem[] => (window as any).globalCartSportify;
-const updateGlobalCart = (newCart: CartDisplayItem[]) => {
-    (window as any).globalCartSportify = newCart;
-    window.dispatchEvent(new CustomEvent('cartUpdated')); // Notify other components
-};
+const globalCart: CartItem[] = (window as any).globalCartSportify;
 
 
 const filterGroupsConfig: FilterGroup[] = [
   { id: 'category', name: 'دسته‌بندی محصول', options: PRODUCT_CATEGORY_OPTIONS, type: 'select' },
+  // Add price range filter later
 ];
 
 const ShopPage: React.FC = () => {
@@ -34,7 +31,7 @@ const ShopPage: React.FC = () => {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(MOCK_PRODUCTS);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [cart, setCart] = useState<CartDisplayItem[]>(getGlobalCart()); 
+  const [cart, setCart] = useState<CartItem[]>(globalCart); // Local state mirroring global for re-render
   
   const [currentFilters, setCurrentFilters] = useState<Record<string, string>>(() => {
     const initialFilters: Record<string, string> = {};
@@ -44,19 +41,6 @@ const ShopPage: React.FC = () => {
     initialFilters['searchTerm'] = searchParams.get('q') || '';
     return initialFilters;
   });
-
-  // Effect to listen for cart changes from other components (e.g., VenuesPage)
-  useEffect(() => {
-    const handleCartUpdate = () => {
-      setCart(getGlobalCart());
-    };
-    window.addEventListener('cartUpdated', handleCartUpdate);
-    handleCartUpdate(); // Initial sync
-    return () => {
-      window.removeEventListener('cartUpdated', handleCartUpdate);
-    };
-  }, []);
-
 
   const applyFilters = useCallback(() => {
     let tempProducts = MOCK_PRODUCTS;
@@ -132,39 +116,16 @@ const ShopPage: React.FC = () => {
   };
   
   const handleAddToCart = (product: Product) => {
-    const currentGlobalCart = getGlobalCart();
-    const existingItemIndex = currentGlobalCart.findIndex(item => item.type === 'product' && item.id === product.id);
-    
-    let updatedCart;
+    const existingItemIndex = globalCart.findIndex(item => item.id === product.id);
     if (existingItemIndex > -1) {
-      updatedCart = currentGlobalCart.map((item, index) => 
-        index === existingItemIndex ? { ...item, quantity: (item as ProductCartItem).quantity + 1 } : item
-      );
+      globalCart[existingItemIndex].quantity += 1;
     } else {
-      const newProductItem: ProductCartItem = {
-          type: 'product',
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.images[0] || 'https://picsum.photos/seed/product_default/100/100',
-          quantity: 1,
-          stock: product.stock,
-          category: product.category, // Populate category
-      };
-      updatedCart = [...currentGlobalCart, newProductItem];
+      globalCart.push({ ...product, quantity: 1 });
     }
-    updateGlobalCart(updatedCart);
-    setCart(updatedCart); // Update local state to trigger re-render
+    (window as any).globalCartSportify = [...globalCart]; // Update the 'global' ref
+    setCart([...globalCart]); // Update local state to trigger re-render
     alert(`محصول "${product.name}" به سبد خرید اضافه شد.`);
-  };
-
-  const getTotalCartItems = () => {
-    return cart.reduce((count, item) => {
-        if (item.type === 'product') {
-            return count + item.quantity;
-        }
-        return count + 1; // Each venue booking is one item package
-    }, 0);
+    // Optionally close modal or give other feedback
   };
 
   return (
@@ -184,16 +145,10 @@ const ShopPage: React.FC = () => {
             onResetFilters={handleResetFilters}
           />
            <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
-            <h4 className="font-semibold text-dark mb-2">سبد خرید ({getTotalCartItems()} آیتم)</h4>
+            <h4 className="font-semibold text-dark mb-2">سبد خرید ({cart.reduce((sum, item) => sum + item.quantity, 0)} آیتم)</h4>
             {cart.length === 0 ? <p className="text-sm text-gray-500">سبد خرید شما خالی است.</p> : (
               <ul className="text-sm space-y-1 max-h-32 overflow-y-auto">
-                {cart.map(item => (
-                    <li key={item.id}>
-                        {item.type === 'product' ? item.name : item.venueName} 
-                        {item.type === 'product' && ` (x${item.quantity})`}
-                        {item.type === 'venue_booking' && ` (رزرو مکان)`}
-                    </li>
-                ))}
+                {cart.map(item => <li key={item.id}>{item.name} (x{item.quantity})</li>)}
               </ul>
             )}
              <Button onClick={() => navigate(Paths.CART)} fullWidth variant='primary' size='sm' className="mt-3" disabled={cart.length === 0}>مشاهده سبد و پرداخت</Button>
@@ -233,8 +188,9 @@ const ShopPage: React.FC = () => {
                     <img src={selectedProduct.images[0] || 'https://picsum.photos/seed/product_detail/400/400'} alt={selectedProduct.name} className="w-full h-auto object-cover rounded-lg shadow-md mb-3" />
                      {selectedProduct.images.length > 1 && (
                         <div className="grid grid-cols-4 gap-2">
-                            {selectedProduct.images.slice(0,4).map((img, idx) => ( 
+                            {selectedProduct.images.slice(0,4).map((img, idx) => ( // Show up to 4 thumbnails
                                 <img key={idx} src={img} alt={`${selectedProduct.name} ${idx+1}`} className="w-full h-20 object-cover rounded-md shadow-sm cursor-pointer hover:opacity-80" 
+                                // onClick={() => setSelectedImage(img)} // Feature: change main image on thumbnail click
                                 />
                             ))}
                         </div>

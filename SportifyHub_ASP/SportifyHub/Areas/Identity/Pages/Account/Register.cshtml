@@ -1,0 +1,40 @@
+@page
+@model SportifyHub.Areas.Identity.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "ثبت نام";
+    Layout = "/Views/Shared/_Layout.cshtml"; // Ensure it uses the main layout
+}
+
+<h1>@ViewData["Title"]</h1>
+<div class="row">
+    <div class="col-md-6">
+        <p>این یک صفحه جایگزین برای ثبت نام است. Scaffold کامل Identity انجام نشد.</p>
+        <p>در یک برنامه واقعی، اینجا فرم ثبت نام با فیلدهای نام کاربری، ایمیل، رمز عبور و تایید رمز عبور قرار می گیرد.</p>
+        @* Example form structure (non-functional without backend logic and full Identity setup) *@
+        <form id="registerForm" method="post" asp-route-returnUrl="@Model.ReturnUrl">
+            <h4>ایجاد حساب کاربری جدید.</h4>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <label asp-for="Input.Email">ایمیل</label>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <label asp-for="Input.Password">رمز عبور</label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <label asp-for="Input.ConfirmPassword">تکرار رمز عبور</label>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">ثبت نام</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

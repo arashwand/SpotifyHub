@@ -1,12 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="rtl"> <!-- Added dir="rtl" for Persian language -->
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - SportifyHub</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"> <!-- Added Bootstrap Icons -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SportifyHub.styles.css" asp-append-version="true" />
+    <!-- Add any other global CSS files here (e.g., for a Persian font) -->
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif; /* Example for a Persian font - needs to be included */
+        }
+        .field-validation-error {
+            color: red;
+        }
+        .validation-summary-errors ul {
+            color: red;
+            list-style-type: none;
+            padding-left: 0;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -20,12 +35,30 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">صفحه اصلی</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Venues" asp-action="Index">اماکن ورزشی</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Classes" asp-action="Index">کلاس ها</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Coaches" asp-action="Index">مربیان</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Shop" asp-action="Index">فروشگاه</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Blog" asp-action="Index">مجله</a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">
+                                <i class="bi bi-cart"></i> سبد خرید
+                            </a>
                         </li>
                     </ul>
+                    <partial name="_LoginPartial" /> @* Handles Login/Register/User links *@
                 </div>
             </div>
         </nav>
@@ -38,7 +71,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - SportifyHub - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 1403 - SportifyHub - <a asp-area="" asp-controller="Home" asp-action="Privacy">حریم خصوصی</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -46,12 +46,14 @@ namespace SportifyHub.Controllers
         }
 
         // GET: Venues/Create
+        // [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View(); // Assumes a Views/Venues/Create.cshtml exists
         }
 
         // POST: Venues/Create
+        // [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,SportType,Location,City,Images,MapLink,AvailableTimeSlotsJson,PricePerHour,Description")] Venue venue)
@@ -75,6 +77,7 @@ namespace SportifyHub.Controllers
         }
 
         // GET: Venues/Edit/5
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             if (id <= 0)
@@ -91,6 +94,7 @@ namespace SportifyHub.Controllers
         }
 
         // POST: Venues/Edit/5
+        // [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,SportType,Location,City,Images,MapLink,AvailableTimeSlotsJson,PricePerHour,Rating,Description")] Venue venue)
@@ -130,6 +134,7 @@ namespace SportifyHub.Controllers
         }
 
         // GET: Venues/Delete/5
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             if (id <= 0)
@@ -146,6 +151,7 @@ namespace SportifyHub.Controllers
         }
 
         // POST: Venues/Delete/5
+        // [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

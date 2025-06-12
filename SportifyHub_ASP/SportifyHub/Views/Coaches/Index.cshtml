@@ -1,0 +1,50 @@
+@model IEnumerable<SportifyHub.Models.Coach>
+
+@{
+    ViewData["Title"] = "لیست مربیان";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary mb-3">افزودن مربی جدید</a>
+</p>
+
+<div class="row">
+    @if (Model == null || !Model.Any())
+    {
+        <p>هیچ مربی یافت نشد.</p>
+    }
+    else
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    @if (!string.IsNullOrEmpty(item.PhotoUrl))
+                    {
+                        <img src="@Url.Content(item.PhotoUrl)" class="card-img-top" alt="@item.Name" style="height: 250px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <img src="~/images/placeholder-coach.png" class="card-img-top" alt="تصویر موجود نیست" style="height: 250px; object-fit: cover;">
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
+                        @{
+                            var specialties = item.CoachSpecialties?.Select(cs => cs.Specialty.ToString()).ToList() ?? new List<string>();
+                        }
+                        <p class="card-text">@string.Join("، ", specialties)</p>
+                        <p class="card-text"><small class="text-muted">مکان: @item.Location</small></p>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">جزئیات</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">ویرایش</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">حذف</a>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">@item.ExperienceYears سال تجربه - امتیاز: @item.Rating</small>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

@@ -1,0 +1,84 @@
+@model SportifyHub.Models.Venue
+
+@{
+    ViewData["Title"] = "ویرایش مکان ورزشی: " + Model.Name;
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h4>مکان ورزشی</h4>
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post"> @* Added method="post" *@
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            @* Rating is displayed but not directly editable in this form; it might be calculated or admin-set elsewhere *@
+            <input type="hidden" asp-for="Rating" />
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="SportType" class="form-label"></label>
+                <select asp-for="SportType" asp-items="Html.GetEnumSelectList<SportCategory>()" class="form-select"></select>
+                <span asp-validation-for="SportType" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Location" class="form-label"></label>
+                <input asp-for="Location" class="form-control" />
+                <span asp-validation-for="Location" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="City" class="form-label"></label>
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="PricePerHour" class="form-label"></label>
+                <input asp-for="PricePerHour" class="form-control" type="number" step="0.01" />
+                <span asp-validation-for="PricePerHour" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="MapLink" class="form-label"></label>
+                <input asp-for="MapLink" class="form-control" type="url" />
+                <span asp-validation-for="MapLink" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">آدرس های تصاویر</label>
+                @* Provide multiple inputs for editing images. Controller expects List<string> images. *@
+                @for (int i = 0; i < 3; i++) // Assuming max 3 images for direct editing
+                {
+                    <input type="text" name="images" class="form-control mb-1" value="@(Model.Images != null && i < Model.Images.Count ? Model.Images.ElementAt(i) : "")" placeholder="آدرس تصویر @(i+1) (اختیاری)" />
+                }
+                 <small class="form-text text-muted">برای حذف یک تصویر، آدرس آن را پاک کنید. برای افزودن، در فیلد خالی وارد کنید.</small>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="AvailableTimeSlotsJson" class="form-label">سانس های موجود (JSON)</label>
+                <textarea asp-for="AvailableTimeSlotsJson" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="AvailableTimeSlotsJson" class="text-danger"></span>
+                 <small class="form-text text-muted">فرمت صحیح JSON وارد کنید.</small>
+            </div>
+
+            @* Amenities and Reviews are typically managed on separate pages or more complex UI *@
+
+            <div class="form-group mt-3">
+                <input type="submit" value="ذخیره تغییرات" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">بازگشت به لیست</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

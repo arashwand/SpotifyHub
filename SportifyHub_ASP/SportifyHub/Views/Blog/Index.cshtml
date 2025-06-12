@@ -1,0 +1,50 @@
+@model IEnumerable<SportifyHub.Models.Article>
+
+@{
+    ViewData["Title"] = "مجله ورزشی";
+}
+
+<h1>@ViewData["Title"]</h1>
+@* TODO: Add filtering by category/tag, sorting options *@
+
+<div class="row">
+    @if (Model == null || !Model.Any())
+    {
+        <p>مقاله‌ای برای نمایش یافت نشد.</p>
+    }
+    else
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                    {
+                        <a asp-action="Details" asp-route-id="@item.Id">
+                            <img src="@Url.Content(item.ImageUrl)" class="card-img-top" alt="@item.Title" style="height: 220px; object-fit: cover;">
+                        </a>
+                    }
+                    else
+                    {
+                        @* Assuming a generic placeholder or one specific for articles *@
+                        <a asp-action="Details" asp-route-id="@item.Id">
+                            <img src="~/images/placeholder-article.png" class="card-img-top" alt="تصویر موجود نیست" style="height: 220px; object-fit: cover;">
+                        </a>
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title"><a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none text-dark">@Html.DisplayFor(modelItem => item.Title)</a></h5>
+                        <p class="card-text"><small class="text-muted">دسته: @item.Category - نویسنده: @item.Author - تاریخ: @item.Date.ToString("yyyy/MM/dd")</small></p>
+                        <p class="card-text">@item.Summary</p>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm">ادامه مطلب <i class="bi bi-arrow-left-short"></i></a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+@* Admin link - check if user is in Admin role before showing *@
+@* @if(User.IsInRole("Admin")) // This requires roles to be set up and user assigned
+{
+    <a asp-controller="Blog" asp-action="Manage" class="btn btn-info mt-3">مدیریت مقالات</a>
+} *@
+<a asp-controller="Blog" asp-action="Manage" class="btn btn-info mt-3">مدیریت مقالات (ادمین)</a> @* Simplified for now *@

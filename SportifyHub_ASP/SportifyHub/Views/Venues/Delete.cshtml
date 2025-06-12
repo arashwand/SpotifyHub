@@ -1,0 +1,32 @@
+@model SportifyHub.Models.Venue
+
+@{
+    ViewData["Title"] = "حذف مکان ورزشی: " + Model.Name;
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3>آیا از حذف این مورد مطمئن هستید؟</h3>
+<div>
+    <h4>@Model.Name</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">نوع ورزش</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.SportType)</dd>
+        <dt class="col-sm-2">موقعیت</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Location)</dd>
+         <dt class="col-sm-2">شهر</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.City)</dd>
+        <dt class="col-sm-2">قیمت ساعتی</dt>
+        <dd class="col-sm-10">@Model.PricePerHour.ToString("N0") تومان</dd>
+        <dt class="col-sm-2">امتیاز</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Rating)</dd>
+    </dl>
+
+    <form asp-action="DeleteConfirmed" asp-route-id="@Model.Id" method="post"> @* Changed asp-action to DeleteConfirmed and added method POST *@
+        @Html.AntiForgeryToken() @* Explicitly add AntiForgeryToken for POST from GET page's form *@
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="حذف" class="btn btn-danger" /> |
+        <a asp-action="Index" class="btn btn-secondary">بازگشت به لیست</a>
+    </form>
+</div>

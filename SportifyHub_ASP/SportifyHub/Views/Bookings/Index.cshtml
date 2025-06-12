@@ -1,0 +1,69 @@
+@model IEnumerable<SportifyHub.Models.Booking>
+@using SportifyHub.Models.Enums // For BookingStatus and BookingType enums
+
+@{
+    ViewData["Title"] = "رزرو های من";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+@if (TempData["InfoMessage"] != null)
+{
+    <div class="alert alert-info">@TempData["InfoMessage"]</div>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <p>شما هیچ رزروی ندارید.</p>
+    <p>
+        <a asp-controller="Venues" asp-action="Index" class="btn btn-primary">رزرو مکان ورزشی</a>
+        <a asp-controller="Classes" asp-action="Index" class="btn btn-info">ثبت نام در کلاس</a>
+    </p>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>مورد رزرو شده</th>
+                <th>نوع</th>
+                <th>تاریخ</th>
+                <th>زمان/جزئیات</th>
+                <th>وضعیت</th>
+                <th>قیمت</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.ItemName)</td>
+                    <td>@(item.Type == BookingType.Venue ? "مکان ورزشی" : "کلاس")</td>
+                    <td>@item.BookingDate.ToString("yyyy/MM/dd")</td>
+                    <td>@Html.DisplayFor(modelItem => item.TimeSlot)</td>
+                    <td>@item.Status.ToString()</td> @* TODO: Localize enum display *@
+                    <td>@item.Price.ToString("N0") تومان</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">جزئیات</a>
+                        @if (item.Status == BookingStatus.Pending || item.Status == BookingStatus.Confirmed)
+                        {
+                            <form asp-action="Cancel" asp-route-id="@item.Id" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('آیا از لغو این رزرو مطمئن هستید؟');">لغو رزرو</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

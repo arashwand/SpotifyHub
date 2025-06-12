@@ -1,0 +1,22 @@
+@{
+    Layout = "/Areas/Identity/Pages/_Layout.cshtml"; // Use the base Identity layout
+}
+
+<h1>مدیریت حساب کاربری</h1>
+
+<div>
+    <h4>تنظیمات حساب خود را تغییر دهید</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_ManageNav" /> @* Assumes _ManageNav.cshtml will be created/scaffolded *@
+        </div>
+        <div class="col-md-9">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

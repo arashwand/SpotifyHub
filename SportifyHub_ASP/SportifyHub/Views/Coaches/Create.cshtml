@@ -1,0 +1,86 @@
+@model SportifyHub.Models.Coach
+@using SportifyHub.Models.Enums // Required for SportCategory enum
+
+@{
+    ViewData["Title"] = "افزودن مربی جدید";
+    var allSpecialties = ViewBag.AllSpecialties as List<SelectListItem> ?? new List<SelectListItem>();
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h4>اطلاعات مربی</h4>
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Location" class="form-label"></label>
+                <input asp-for="Location" class="form-control" />
+                <span asp-validation-for="Location" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Bio" class="form-label"></label>
+                <textarea asp-for="Bio" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Bio" class="text-danger"></span>
+            </div>
+             <div class="mb-3">
+                <label asp-for="ExperienceYears" class="form-label"></label>
+                <input asp-for="ExperienceYears" class="form-control" type="number" />
+                <span asp-validation-for="ExperienceYears" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ContactInfo" class="form-label"></label>
+                <input asp-for="ContactInfo" class="form-control" />
+                <span asp-validation-for="ContactInfo" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="PhotoUrl" class="form-label"></label>
+                <input asp-for="PhotoUrl" class="form-control" type="url" />
+                <span asp-validation-for="PhotoUrl" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="QualificationsJson" class="form-label">مدارک (هر مدرک در یک خط جدید)</label>
+                <textarea asp-for="QualificationsJson" class="form-control" rows="3" placeholder="مدرک ۱&#10;مدرک ۲"></textarea>
+                <span asp-validation-for="QualificationsJson" class="text-danger"></span>
+                <small class="form-text text-muted">برای وارد کردن چندین مدرک، هر کدام را در یک خط جدید بنویسید. این اطلاعات به صورت یک آرایه JSON ذخیره خواهد شد.</small>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">تخصص ها</label>
+                @foreach (var specialtyItem in allSpecialties)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="selectedSpecialties" value="@specialtyItem.Value" id="spec_@specialtyItem.Value" />
+                        <label class="form-check-label" for="spec_@specialtyItem.Value">@specialtyItem.Text</label>
+                    </div>
+                }
+            </div>
+
+            <div class="form-group mt-3">
+                <input type="submit" value="ایجاد" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">بازگشت به لیست</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Optional: Client-side script to convert newline-separated qualifications to JSON array string before submit
+        // This can also be handled server-side in the controller.
+        // document.querySelector('form').addEventListener('submit', function(e) {
+        //     var qualificationsTextarea = document.getElementById('QualificationsJson');
+        //     if (qualificationsTextarea) {
+        //         var lines = qualificationsTextarea.value.split('\\n').map(line => line.trim()).filter(line => line);
+        //         qualificationsTextarea.value = JSON.stringify(lines);
+        //     }
+        // });
+    </script>
+}

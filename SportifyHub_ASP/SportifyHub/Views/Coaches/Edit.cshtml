@@ -1,0 +1,105 @@
+@model SportifyHub.Models.Coach
+@using SportifyHub.Models.Enums // Required for SportCategory enum
+@using System.Text.Json // Required for JsonSerializer
+
+@{
+    ViewData["Title"] = "ویرایش اطلاعات مربی: " + Model.Name;
+    var allSpecialties = ViewBag.AllSpecialties as List<SelectListItem> ?? new List<SelectListItem>();
+    var qualificationsForTextarea = "";
+    if (!string.IsNullOrEmpty(Model.QualificationsJson))
+    {
+        try
+        {
+            var qualificationsList = JsonSerializer.Deserialize<List<string>>(Model.QualificationsJson);
+            if (qualificationsList != null)
+            {
+                qualificationsForTextarea = string.Join("\n", qualificationsList);
+            }
+        }
+        catch { /* Ignore deserialization error, textarea will show raw JSON */ qualificationsForTextarea = Model.QualificationsJson; }
+    }
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h4>اطلاعات مربی</h4>
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Rating" />
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Location" class="form-label"></label>
+                <input asp-for="Location" class="form-control" />
+                <span asp-validation-for="Location" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Bio" class="form-label"></label>
+                <textarea asp-for="Bio" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Bio" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ExperienceYears" class="form-label"></label>
+                <input asp-for="ExperienceYears" class="form-control" type="number" />
+                <span asp-validation-for="ExperienceYears" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ContactInfo" class="form-label"></label>
+                <input asp-for="ContactInfo" class="form-control" />
+                <span asp-validation-for="ContactInfo" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="PhotoUrl" class="form-label"></label>
+                <input asp-for="PhotoUrl" class="form-control" type="url" />
+                <span asp-validation-for="PhotoUrl" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="QualificationsJson" class="form-label">مدارک (هر مدرک در یک خط جدید)</label>
+                <textarea asp-for="QualificationsJson" id="QualificationsJsonInput" class="form-control" rows="3">@qualificationsForTextarea</textarea>
+                <span asp-validation-for="QualificationsJson" class="text-danger"></span>
+                <small class="form-text text-muted">برای وارد کردن چندین مدرک، هر کدام را در یک خط جدید بنویسید. این اطلاعات به صورت یک آرایه JSON ذخیره خواهد شد.</small>
+            </div>
+             <div class="mb-3">
+                <label class="form-label">تخصص ها</label>
+                @foreach (var specialtyItem in allSpecialties)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="selectedSpecialties" value="@specialtyItem.Value" id="spec_@specialtyItem.Value" checked="@specialtyItem.Selected" />
+                        <label class="form-check-label" for="spec_@specialtyItem.Value">@specialtyItem.Text</label>
+                    </div>
+                }
+            </div>
+
+            <div class="form-group mt-3">
+                <input type="submit" value="ذخیره تغییرات" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">بازگشت به لیست</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Optional: Client-side script to convert newline-separated qualifications to JSON array string before submit
+        // This ensures the controller receives a JSON string if the user edited it as newline-separated.
+        // document.querySelector('form').addEventListener('submit', function(e) {
+        //     var qualificationsTextarea = document.getElementById('QualificationsJsonInput'); // Changed ID for clarity
+        //     if (qualificationsTextarea) {
+        //         var lines = qualificationsTextarea.value.split('\\n').map(line => line.trim()).filter(line => line);
+        //         // Only re-serialize if it's not already a valid JSON array (basic check)
+        //         if (!qualificationsTextarea.value.trim().startsWith('[')) {
+        //            qualificationsTextarea.value = JSON.stringify(lines);
+        //         }
+        //     }
+        // });
+    </script>
+}
