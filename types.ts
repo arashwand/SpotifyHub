@@ -37,7 +37,10 @@ export interface Venue {
   city: string;
   images: string[]; 
   mapLink?: string; 
-  availableTimeSlots: string[]; 
+  // availableTimeSlots: string[]; // Old structure
+  availableTimeSlots: { // New structure: maps day of week (Persian) to time slots
+    [dayOfWeek: string]: string[]; // e.g., "شنبه": ["۱۰:۰۰-۱۲:۰۰", "۱۴:۰۰-۱۶:۰۰"]
+  };
   pricePerHour: number;
   rating: number; 
   reviews: Review[];
@@ -123,10 +126,14 @@ export interface Booking {
   type: 'venue' | 'class';
   itemId: string;
   itemName: string;
-  date: string;
+  date: string; // This could be a single date string or array for recurring
   time?: string; 
   status: 'تایید شده' | 'در انتظار' | 'لغو شده';
   price: number;
+  // For recurring bookings
+  recurrenceType?: 'once' | 'weekly' | 'monthly';
+  numberOfSessions?: number;
+  bookedSlots?: BookingSlot[];
 }
 
 export interface Order {
@@ -166,3 +173,8 @@ export const Paths = {
   LOGIN: '/login',
   CART: '/cart', // Added for clarity
 };
+
+export interface BookingSlot {
+  date: Date;
+  timeSlot: string;
+}

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Venue, ClassItem, Coach, Product, Article, SportCategory, SkillLevel, Review, Amenity, Booking, Order, UserProfile, Paths, FilterOption } from './types';
 
@@ -15,6 +16,9 @@ export function ShowerIcon({ className }: {className?: string}): React.ReactNode
 export function LockerIcon({ className }: {className?: string}): React.ReactNode { return (<svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm3 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1zm0 4a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" /></svg>)}
 export function AirConIcon({ className }: {className?: string}): React.ReactNode { return (<svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M2 5a3 3 0 013-3h10a3 3 0 013 3v10a3 3 0 01-3 3H5a3 3 0 01-3-3V5zm3 .5a.5.5 0 000 1h10a.5.5 0 000-1H5zM5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H5.5A.5.5 0 015 8zm6 0a.5.5 0 01.5-.5h4a.5.5 0 010 1h-4a.5.5 0 01-.5-.5zM5 11a.5.5 0 01.5-.5h4a.5.5 0 010 1H5.5A.5.5 0 015 11zm6 0a.5.5 0 01.5-.5h4a.5.5 0 010 1h-4a.5.5 0 01-.5-.5z" clipRule="evenodd" /></svg>)}
 export function WaterDispenserIcon({ className }: {className?: string}): React.ReactNode { return (<svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1zM4 6a2 2 0 012-2h8a2 2 0 012 2v1H4V6zm0 3v6a2 2 0 002 2h8a2 2 0 002-2V9H4zm3 2a1 1 0 011-1h2a1 1 0 110 2H8a1 1 0 01-1-1z" clipRule="evenodd" /></svg>)}
+// Generic Parking Icon for amenities (can be replaced with a more specific one if available)
+export function ParkingIcon({ className }: { className?: string }): React.ReactNode { return (<svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v2.586A3.5 3.5 0 003.5 8v8a1.5 1.5 0 001.5 1.5h10A1.5 1.5 0 0016.5 16V8a3.5 3.5 0 00-1.5-2.414V3a1 1 0 10-2 0v1h-5V3a1 1 0 00-1-1zm3.5 8.5a.5.5 0 01.5-.5h2a.5.5 0 010 1H10a.5.5 0 01-.5-.5zM7 13a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd"></path></svg>);}
+
 
 export const MOCK_REVIEWS: Review[] = [
   { id: 'r1', userId: 'u1', userName: 'علی رضایی', rating: 5, comment: 'عالی بود! خیلی تمیز و مرتب.', date: '۱۴۰۳/۰۲/۱۵' },
@@ -25,7 +29,8 @@ export const MOCK_REVIEWS: Review[] = [
 const AmenityIconDefaultClass = "w-4 h-4 text-currentColor";
 
 export const MOCK_AMENITIES: Amenity[] = [
-  { id: 'am1', name: 'پارکینگ', icon: <WifiIcon className={AmenityIconDefaultClass} /> }, 
+  { id: 'am0', name: 'پارکینگ', icon: <ParkingIcon className={AmenityIconDefaultClass} /> }, // WifiIcon used as placeholder, replace with actual ParkingIcon if available
+  { id: 'am1', name: 'وای‌فای', icon: <WifiIcon className={AmenityIconDefaultClass} /> }, 
   { id: 'am2', name: 'دوش', icon: <ShowerIcon className={AmenityIconDefaultClass} /> }, 
   { id: 'am3', name: 'کمد', icon: <LockerIcon className={AmenityIconDefaultClass} /> }, 
   { id: 'am4', name: 'تهویه مطبوع', icon: <AirConIcon className={AmenityIconDefaultClass} /> }, 
@@ -42,11 +47,19 @@ export const MOCK_VENUES: Venue[] = [
     city: 'تهران',
     images: ['https://picsum.photos/seed/futsal1/600/400', 'https://picsum.photos/seed/futsal2/600/400'],
     mapLink: '#',
-    availableTimeSlots: ['شنبه ۱۶:۰۰-۱۸:۰۰', 'یکشنبه ۱۰:۰۰-۱۲:۰۰'],
+    availableTimeSlots: {
+      "شنبه": ["۱۶:۰۰-۱۸:۰۰", "۱۸:۰۰-۲۰:۰۰"],
+      "یکشنبه": ["۱۰:۰۰-۱۲:۰۰", "۱۴:۰۰-۱۶:۰۰"],
+      "دوشنبه": ["۱۶:۰۰-۱۸:۰۰"],
+      "سه‌شنبه": [],
+      "چهارشنبه": ["۱۸:۰۰-۲۰:۰۰", "۲۰:۰۰-۲۲:۰۰"],
+      "پنج‌شنبه": ["۱۰:۰۰-۱۲:۰۰", "۱۲:۰۰-۱۴:۰۰", "۱۴:۰۰-۱۶:۰۰"],
+      "جمعه": ["۰۸:۰۰-۱۰:۰۰", "۱۰:۰۰-۱۲:۰۰"]
+    },
     pricePerHour: 250000,
     rating: 4.5,
     reviews: MOCK_REVIEWS.slice(0, 2),
-    amenities: MOCK_AMENITIES.slice(0,3),
+    amenities: MOCK_AMENITIES.slice(0,4), // Added Parking
     description: 'یک زمین فوتبال با کیفیت عالی و نورپردازی مناسب برای بازی در شب.'
   },
   {
@@ -56,8 +69,16 @@ export const MOCK_VENUES: Venue[] = [
     location: 'مجموعه ورزشی انقلاب، تهران',
     city: 'تهران',
     images: ['https://picsum.photos/seed/pool1/600/400', 'https://picsum.photos/seed/pool2/600/400'],
-    availableTimeSlots: ['روزهای زوج ۸:۰۰-۱۴:۰۰ (آقایان)', 'روزهای فرد ۸:۰۰-۱۴:۰۰ (بانوان)'],
-    pricePerHour: 150000, // Or price per session
+    availableTimeSlots: { 
+      "شنبه": ["۰۸:۰۰-۱۰:۰۰", "۱۰:۰۰-۱۲:۰۰", "۱۴:۰۰-۱۶:۰۰ (بانوان)"],
+      "یکشنبه": ["۰۸:۰۰-۱۰:۰۰ (بانوان)", "۱۰:۰۰-۱۲:۰۰ (بانوان)", "۱۴:۰۰-۱۶:۰۰"],
+      "دوشنبه": ["۰۸:۰۰-۱۰:۰۰", "۱۰:۰۰-۱۲:۰۰", "۱۴:۰۰-۱۶:۰۰ (بانوان)"],
+      "سه‌شنبه": ["۰۸:۰۰-۱۰:۰۰ (بانوان)", "۱۰:۰۰-۱۲:۰۰ (بانوان)", "۱۴:۰۰-۱۶:۰۰", "۱۶:۰۰-۱۸:۰۰"],
+      "چهارشنبه": ["۰۸:۰۰-۱۰:۰۰", "۱۰:۰۰-۱۲:۰۰", "۱۴:۰۰-۱۶:۰۰ (بانوان)"],
+      "پنج‌شنبه": ["۰۸:۰۰-۱۰:۰۰ (بانوان)", "۱۰:۰۰-۱۲:۰۰", "۱۲:۰۰-۱۴:۰۰"],
+      "جمعه": ["۰۸:۰۰-۱۰:۰۰", "۱۰:۰۰-۱۲:۰۰", "۱۲:۰۰-۱۴:۰۰"]
+    },
+    pricePerHour: 150000, 
     rating: 4.8,
     reviews: MOCK_REVIEWS.slice(1,3),
     amenities: MOCK_AMENITIES,
@@ -70,11 +91,19 @@ export const MOCK_VENUES: Venue[] = [
     location: 'خیابان آپادانا، تهران',
     city: 'تهران',
     images: ['https://picsum.photos/seed/basket1/600/400', 'https://picsum.photos/seed/basket2/600/400'],
-    availableTimeSlots: ['دوشنبه ۱۸:۰۰-۲۰:۰۰', 'چهارشنبه ۱۸:۰۰-۲۰:۰۰'],
+    availableTimeSlots: {
+      "شنبه": ["۱۴:۰۰-۱۶:۰۰"],
+      "یکشنبه": [],
+      "دوشنبه": ["۱۸:۰۰-۲۰:۰۰", "۲۰:۰۰-۲۲:۰۰"],
+      "سه‌شنبه": ["۱۷:۰۰-۱۹:۰۰"],
+      "چهارشنبه": ["۱۸:۰۰-۲۰:۰۰"],
+      "پنج‌شنبه": ["۱۶:۰۰-۱۸:۰۰", "۱۸:۰۰-۲۰:۰۰"],
+      "جمعه": []
+    },
     pricePerHour: 300000,
     rating: 4.2,
     reviews: [MOCK_REVIEWS[0]],
-    amenities: MOCK_AMENITIES.slice(0,2),
+    amenities: MOCK_AMENITIES.slice(0,3),
     description: 'سالن مجهز بسکتبال با کفپوش استاندارد و تهویه مناسب.'
   },
 ];
@@ -285,4 +314,17 @@ export const ARTICLE_CATEGORY_OPTIONS: FilterOption[] = [
     { id: 'article_cat_health', name: 'نکات سلامتی', value: 'نکات سلامتی' },
     { id: 'article_cat_training', name: 'راهنمای تمرین', value: 'راهنمای تمرین' },
     { id: 'article_cat_news', name: 'اخبار ورزشی', value: 'اخبار ورزشی' },
+];
+
+export const PERSIAN_DAYS_OF_WEEK = ["یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه"];
+export const PERSIAN_MONTH_NAMES = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
+
+// Add MOCK_HOLIDAYS (YYYY/MM/DD format for Gregorian dates)
+// Example: Eid al-Fitr might be around 2024/04/10, Nowruz 2024/03/20
+// For simplicity, using a few arbitrary dates. A real app would need a proper holiday calendar.
+export const MOCK_HOLIDAYS: string[] = [
+    "2024/07/28", // Example holiday
+    "2024/08/05", // Another example
+    "2024/12/25", // Christmas Day as an example
+    // Add more official Persian holidays here, ensuring correct Gregorian conversion if needed
 ];
