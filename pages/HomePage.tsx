@@ -1,17 +1,16 @@
+
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from '../components/common/SearchBar';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
-import { MOCK_VENUES, MOCK_CLASSES, MOCK_COACHES, SPORT_CATEGORIES_FEATURED } from '../constants'; // Adjust path
+import { MOCK_VENUES, MOCK_CLASSES, MOCK_COACHES, SPORT_CATEGORIES_FEATURED } from '../mockData.tsx'; 
 import { Paths } from '../types';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleSearch = (searchTerm: string) => {
-    // For simplicity, navigate to a general search results page or filter one of the main categories
-    // This is a placeholder, actual search would be more complex
     navigate(`${Paths.VENUES}?q=${encodeURIComponent(searchTerm)}`);
   };
 
@@ -57,7 +56,7 @@ const HomePage: React.FC = () => {
         <Section title="دسته‌بندی‌های ورزشی">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
             {SPORT_CATEGORIES_FEATURED.map((category) => {
-              const IconComponent = category.icon; // category.icon is a function component
+              const IconComponent = category.icon; 
               return (
                 <Link
                   to={category.path}

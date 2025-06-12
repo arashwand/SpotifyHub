@@ -7,14 +7,19 @@ import Modal from '../components/common/Modal';
 import Button from '../components/common/Button';
 import SearchBar from '../components/common/SearchBar';
 import StarRating from '../components/common/StarRating';
-import Calendar, { DailyAvailabilityStatus } from '../components/common/Calendar'; // Import Calendar & type
-import { MOCK_VENUES, LOCATION_OPTIONS, SPORT_TYPE_OPTIONS, PERSIAN_DAYS_OF_WEEK, MOCK_HOLIDAYS } from '../constants'; // Adjust path
-import { Venue, FilterGroup, Amenity, BookingSlot } from '../types'; // Adjust path
+import Calendar, { DailyAvailabilityStatus } from '../components/common/Calendar';
+import { MOCK_VENUES, LOCATION_OPTIONS, SPORT_TYPE_OPTIONS, PERSIAN_DAYS_OF_WEEK, MOCK_HOLIDAYS } from '../mockData.tsx'; 
+import { Venue, FilterGroup, Amenity, BookingSlot, VenueBookingCartItem, CartDisplayItem } from '../types'; 
 
 const filterGroupsConfig: FilterGroup[] = [
   { id: 'city', name: 'شهر', options: LOCATION_OPTIONS, type: 'select' },
   { id: 'sportType', name: 'نوع ورزش', options: SPORT_TYPE_OPTIONS, type: 'select' },
 ];
+
+// Ensure globalCartSportify is initialized on the window object for CartDisplayItem
+if (typeof (window as any).globalCartSportify === 'undefined') {
+    (window as any).globalCartSportify = [];
+}
 
 const VenuesPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -30,7 +35,7 @@ const VenuesPage: React.FC = () => {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
   const [recurrenceType, setRecurrenceType] = useState<'once' | 'weekly' | 'monthly'>('once');
   const [numberOfSessions, setNumberOfSessions] = useState<number>(1);
-  const [calculatedBookingSlots, setCalculatedBookingSlots] = useState<BookingSlot[]>([]);
+  const [calculatedBookingSlots, setCalculatedBookingSlots] = useState<BookingSlot[]>([]); // Uses Date objects
 
   const [currentFilters, setCurrentFilters] = useState<Record<string, string>>(() => {
     const initialFilters: Record<string, string> = {};
@@ -95,11 +100,13 @@ const VenuesPage: React.FC = () => {
       const slots: BookingSlot[] = [];
       let currentDate = new Date(selectedDate);
       for (let i = 0; i < (recurrenceType === 'once' ? 1 : numberOfSessions); i++) {
+        // Ensure not to book on holidays or past dates if recurrence pushes into them
+        // For simplicity, this check is not re-applied here during recurrence calculation for mock.
+        // A real app would need robust validation for each recurring slot.
         slots.push({ date: new Date(currentDate), timeSlot: selectedTimeSlot });
         if (recurrenceType === 'weekly') {
           currentDate.setDate(currentDate.getDate() + 7);
         } else if (recurrenceType === 'monthly') {
-          // Naive month increment, doesn't handle end of month perfectly but ok for mock
           currentDate.setMonth(currentDate.getMonth() + 1);
         }
       }
@@ -158,16 +165,31 @@ const VenuesPage: React.FC = () => {
   };
   
   const handleBooking = (venue: Venue) => {
-    if (!selectedDate || !selectedTimeSlot) {
-      alert("لطفاً تاریخ و سانس مورد نظر را انتخاب کنید.");
+    if (!selectedDate || !selectedTimeSlot || calculatedBookingSlots.length === 0) {
+      alert("لطفاً تاریخ و سانس معتبر را انتخاب کرده و از محاسبه جلسات اطمینان حاصل کنید.");
       return;
     }
     
-    const bookingSummary = calculatedBookingSlots.map(slot => 
-      `${slot.date.toLocaleDateString('fa-IR')} ساعت ${slot.timeSlot}`
-    ).join('\n');
+    const venueBookingItem: VenueBookingCartItem = {
+        type: 'venue_booking',
+        id: `booking-${venue.id}-${Date.now()}`, // Unique ID for the cart item
+        venueId: venue.id,
+        venueName: venue.name,
+        venueImage: venue.images[0] || 'https://picsum.photos/seed/venue_default/100/100', // Default image if none
+        slots: calculatedBookingSlots.map(slot => ({
+            date: slot.date.toISOString(), // Store date as ISO string
+            timeSlot: slot.timeSlot,
+        })),
+        pricePerSlot: venue.pricePerHour,
+        totalPrice: calculatedBookingSlots.length * venue.pricePerHour,
+    };
 
-    alert(`درخواست رزرو برای "${venue.name}" با مشخصات زیر ارسال شد:\n${bookingSummary}\nمجموع هزینه: ${(calculatedBookingSlots.length * venue.pricePerHour).toLocaleString('fa-IR')} تومان\n(شبیه‌سازی شده)`);
+    const currentGlobalCart: CartDisplayItem[] = (window as any).globalCartSportify || [];
+    (window as any).globalCartSportify = [...currentGlobalCart, venueBookingItem];
+    
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
+
+    alert(`رزرو مکان "${venue.name}" با موفقیت به سبد خرید شما اضافه شد.`);
     closeModal();
   };
 
@@ -180,11 +202,12 @@ const VenuesPage: React.FC = () => {
   const getDailyAvailabilityStatusForVenue = useCallback((date: Date): DailyAvailabilityStatus => {
     if (!selectedVenue) return 'unavailable';
 
-    date.setHours(0,0,0,0); // Normalize date
+    const normalizedDate = new Date(date);
+    normalizedDate.setHours(0,0,0,0);
     const today = new Date();
     today.setHours(0,0,0,0);
 
-    if (date.getTime() < today.getTime()) return 'past';
+    if (normalizedDate.getTime() < today.getTime()) return 'past';
 
     const holidayDatesSet = new Set(MOCK_HOLIDAYS.map(h => {
         const [hYear, hMonth, hDay] = h.split('/').map(Number);
@@ -192,19 +215,16 @@ const VenuesPage: React.FC = () => {
         holidayDate.setHours(0,0,0,0);
         return holidayDate.getTime();
     }));
-    if (holidayDatesSet.has(date.getTime())) return 'holiday';
+    if (holidayDatesSet.has(normalizedDate.getTime())) return 'holiday';
     
-    const dayName = getDayName(date);
+    const dayName = getDayName(normalizedDate);
     const slotsForDay = selectedVenue.availableTimeSlots[dayName] || [];
     const numberOfSlots = slotsForDay.length;
 
-    // This is a mock logic. A real app would check actual bookings against total capacity.
-    // For this mock, we use total number of defined slots for a day of week as capacity indicator.
-    // Assuming max capacity ~ 5-6 slots per day type based on MOCK_VENUES structure.
-    if (numberOfSlots === 0) return 'full'; // Or 'unavailable' if it means venue is closed that day
-    if (numberOfSlots <= 1) return 'high'; // Very busy
-    if (numberOfSlots <= 3) return 'medium'; // Moderately busy
-    return 'low'; // Many slots
+    if (numberOfSlots === 0) return 'full'; 
+    if (numberOfSlots <= 1) return 'high'; 
+    if (numberOfSlots <= 3) return 'medium'; 
+    return 'low'; 
   }, [selectedVenue]);
 
 
@@ -351,7 +371,7 @@ const VenuesPage: React.FC = () => {
                     <div className="flex flex-wrap gap-x-3 gap-y-2 mb-4">
                         {selectedVenue.amenities.map(amenity => (
                             <span key={amenity.id} className="bg-primary/10 text-primary text-xs font-medium px-2.5 py-1 rounded-full flex items-center">
-                                {amenity.icon && React.isValidElement(amenity.icon) ? React.cloneElement(amenity.icon as React.ReactElement, { className: "w-3.5 h-3.5 mr-1 rtl:ml-1 rtl:mr-0" }): null}
+                                {amenity.icon && React.isValidElement(amenity.icon) ? React.cloneElement(amenity.icon as React.ReactElement<{ className?: string }>, { className: "w-3.5 h-3.5 mr-1 rtl:ml-1 rtl:mr-0" }): null}
                                 {amenity.name}
                             </span>
                         ))}
@@ -360,7 +380,7 @@ const VenuesPage: React.FC = () => {
             </div>
 
             <Button onClick={() => handleBooking(selectedVenue)} fullWidth size="lg" className="mt-6" disabled={!selectedTimeSlot || calculatedBookingSlots.length === 0}>
-              تایید و رزرو نهایی
+              افزودن به سبد خرید
             </Button>
           </div>
         </Modal>

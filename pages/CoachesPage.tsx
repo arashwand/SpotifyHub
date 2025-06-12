@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import Card from '../components/common/Card';
@@ -6,13 +7,12 @@ import Modal from '../components/common/Modal';
 import Button from '../components/common/Button';
 import SearchBar from '../components/common/SearchBar';
 import StarRating from '../components/common/StarRating';
-import { MOCK_COACHES, LOCATION_OPTIONS, COACH_SPECIALTY_OPTIONS } from '../constants'; // Adjust path
-import { Coach, FilterGroup } from '../types'; // Adjust path
+import { MOCK_COACHES, LOCATION_OPTIONS, COACH_SPECIALTY_OPTIONS } from '../mockData.tsx'; 
+import { Coach, FilterGroup } from '../types'; 
 
 const filterGroupsConfig: FilterGroup[] = [
   { id: 'location', name: 'شهر', options: LOCATION_OPTIONS, type: 'select' },
   { id: 'specialty', name: 'تخصص', options: COACH_SPECIALTY_OPTIONS, type: 'select' },
-  // Add rating filter later
 ];
 
 const CoachesPage: React.FC = () => {
@@ -113,7 +113,6 @@ const CoachesPage: React.FC = () => {
   
   const handleContactCoach = (coach: Coach) => {
     alert(`درخواست ارتباط با مربی "${coach.name}" ارسال شد. (شبیه‌سازی شده)`);
-    // Ideally, navigate to a contact form or show contact info if available
     closeModal();
   };
 
