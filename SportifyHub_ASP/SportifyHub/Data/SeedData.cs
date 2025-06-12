@@ -19,7 +19,7 @@ namespace SportifyHub.Data
 
             if (context.Database.GetPendingMigrations().Any())
             {
-                // context.Database.Migrate(); // Apply migrations - SKIPPING THIS
+                 context.Database.Migrate(); // Apply migrations - SKIPPING THIS
             }
 
             if (context.Venues.Any() || context.FitnessClasses.Any())
@@ -39,42 +39,42 @@ namespace SportifyHub.Data
         {
             // --- Amenities ---
             var amenities = GetAmenities();
-            // context.Amenities.AddRange(amenities);
-            // context.SaveChanges(); // Save amenities to get IDs if DB was live
+            context.Amenities.AddRange(amenities);
+            context.SaveChanges(); // Save amenities to get IDs if DB was live
 
             // --- Reviews ---
             var reviews = GetReviews("user1_placeholder_id", "user2_placeholder_id", "user3_placeholder_id");
-            // context.Reviews.AddRange(reviews);
-            // context.SaveChanges(); // Save reviews
+            context.Reviews.AddRange(reviews);
+            context.SaveChanges(); // Save reviews
 
             // --- Venues ---
             var venues = GetVenues(amenities, reviews.Take(2).ToList()); // Provide a subset of reviews for venues
-            // context.Venues.AddRange(venues);
+            context.Venues.AddRange(venues);
 
             // --- Coaches ---
             var coaches = GetCoaches(reviews.Skip(2).Take(1).ToList()); // Provide a different subset for coaches
-            // context.Coaches.AddRange(coaches);
+            context.Coaches.AddRange(coaches);
 
             // --- FitnessClasses ---
             var fitnessClasses = GetFitnessClasses(coaches, reviews.Take(1).ToList()); // And another subset
-            // context.FitnessClasses.AddRange(fitnessClasses);
+            context.FitnessClasses.AddRange(fitnessClasses);
 
             // --- Products ---
             var products = GetProducts();
-            // context.Products.AddRange(products);
+            context.Products.AddRange(products);
 
             // --- Articles ---
             var articles = GetArticles();
-            // context.Articles.AddRange(articles);
+            context.Articles.AddRange(articles);
 
-            // try
-            // {
-            //     context.SaveChanges();
-            // }
-            // catch (Exception ex)
-            // {
-            //     Console.WriteLine($"Error saving seeded data: {ex.Message}");
-            // }
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving seeded data: {ex.Message}");
+            }
         }
 
         public static List<Amenity> GetAmenities()
