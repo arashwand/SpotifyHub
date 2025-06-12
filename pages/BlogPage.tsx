@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Card from '../components/common/Card';
@@ -5,12 +6,11 @@ import FilterPanel from '../components/common/FilterPanel';
 import Modal from '../components/common/Modal';
 import Button from '../components/common/Button';
 import SearchBar from '../components/common/SearchBar';
-import { MOCK_ARTICLES, ARTICLE_CATEGORY_OPTIONS } from '../constants'; // Adjust path
-import { Article, FilterGroup } from '../types'; // Adjust path
+import { MOCK_ARTICLES, ARTICLE_CATEGORY_OPTIONS } from '../mockData.tsx'; 
+import { Article, FilterGroup } from '../types'; 
 
 const filterGroupsConfig: FilterGroup[] = [
   { id: 'category', name: 'دسته‌بندی مقاله', options: ARTICLE_CATEGORY_OPTIONS, type: 'select' },
-  // Add author or tag filters later
 ];
 
 const BlogPage: React.FC = () => {
@@ -124,7 +124,7 @@ const BlogPage: React.FC = () => {
         </div>
         <div className="md:col-span-3">
           {filteredArticles.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6"> {/* Blog often uses 2-col layout */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6"> 
               {filteredArticles.map((article) => (
                 <Card 
                   key={article.id} 
@@ -161,7 +161,6 @@ const BlogPage: React.FC = () => {
             <p className="text-gray-700 leading-relaxed italic mb-4">{selectedArticle.summary}</p>
             
             <h3 className="font-semibold text-dark mt-3 mb-1 text-lg">متن کامل مقاله:</h3>
-            {/* In a real app, render HTML content safely or parse Markdown */}
             <div className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none text-gray-800 leading-relaxed" dangerouslySetInnerHTML={{ __html: selectedArticle.content.replace(/\n/g, '<br />') }}>
             </div>
 

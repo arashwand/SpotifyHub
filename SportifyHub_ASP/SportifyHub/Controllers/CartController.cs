@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using System; // For TimeSpan in session options if configuring here (though done in Program.cs)
+using System;
+using Microsoft.AspNetCore.Authorization; // For TimeSpan in session options if configuring here (though done in Program.cs)
 
 namespace SportifyHub.Controllers
 {

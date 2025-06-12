@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import Card from '../components/common/Card';
@@ -6,11 +7,11 @@ import Modal from '../components/common/Modal';
 import Button from '../components/common/Button';
 import SearchBar from '../components/common/SearchBar';
 import StarRating from '../components/common/StarRating';
-import { MOCK_CLASSES, LOCATION_OPTIONS, CLASS_TYPE_OPTIONS, SKILL_LEVEL_OPTIONS } from '../constants'; // Adjust path
-import { ClassItem, FilterGroup } from '../types'; // Adjust path
+import { MOCK_CLASSES, LOCATION_OPTIONS, CLASS_TYPE_OPTIONS, SKILL_LEVEL_OPTIONS } from '../mockData.tsx'; 
+import { ClassItem, FilterGroup } from '../types'; 
 
 const filterGroupsConfig: FilterGroup[] = [
-  { id: 'location', name: 'شهر', options: LOCATION_OPTIONS, type: 'select' }, // Using general location for classes too
+  { id: 'location', name: 'شهر', options: LOCATION_OPTIONS, type: 'select' }, 
   { id: 'classType', name: 'نوع کلاس', options: CLASS_TYPE_OPTIONS, type: 'select' },
   { id: 'skillLevel', name: 'سطح مهارت', options: SKILL_LEVEL_OPTIONS, type: 'select' },
 ];
@@ -42,7 +43,7 @@ const ClassesPage: React.FC = () => {
         cls.instructorName.toLowerCase().includes(currentFilters.searchTerm.toLowerCase())
       );
     }
-    if (currentFilters.location && currentFilters.location !== LOCATION_OPTIONS[0].value) { // Assuming city is part of location string
+    if (currentFilters.location && currentFilters.location !== LOCATION_OPTIONS[0].value) { 
       tempClasses = tempClasses.filter(cls => cls.location.includes(currentFilters.location));
     }
     if (currentFilters.classType && currentFilters.classType !== CLASS_TYPE_OPTIONS[0].value) {
