@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportifyHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: 'Vazirmatn', sans-serif; /* Example using Vazirmatn, ensure it's loaded or use a common font */
+      }
+      /* Custom Tailwind theme extensions (optional) */
+      /* Ensure Tailwind JIT can pick up these class names */
+      /* Or define them in a tailwind.config.js if using a build process */
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#007bff', // Example primary color (blue)
+              'primary-dark': '#0056b3',
+              secondary: '#6c757d', // Example secondary color (gray)
+              accent: '#17a2b8', // Example accent color (teal)
+              'accent-hover': '#138496',
+              light: '#f8f9fa', // Light background
+              dark: '#343a40', // Dark text
+              'medium-dark': '#495057',
+              'light-text': '#6c757d', // Lighter text for secondary info
+              danger: '#dc3545',
+              success: '#28a745',
+              warning: '#ffc107',
+              info: '#17a2b8',
+              'medium-light': '#e9ecef', // for borders, dividers or light hover
+            },
+            fontFamily: {
+              sans: ['Vazirmatn', 'sans-serif'],
+              vazir: ['Vazirmatn', 'sans-serif'],
+            }
+          }
+        },
+        // For enabling RTL support with Tailwind JIT if not default
+        // variants: {
+        //   extend: {
+        //     space: ['rtl'],
+        //     margin: ['rtl'],
+        //     padding: ['rtl'],
+        //     textAlign: ['rtl'],
+        //     // etc.
+        //   }
+        // },
+      }
+    </script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^18.2.0",
+    "react-dom/": "https://esm.sh/react-dom@^18.2.0/",
+    "react/": "https://esm.sh/react@^18.2.0/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^6.22.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-light text-dark">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>
